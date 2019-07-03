@@ -1,0 +1,98 @@
+AvoidChallenge:
+  ChooseSide: [1, 2, 0.05, 0.04]
+  Distant: [50, 90, 53, 100, 110, 51, 6]
+  Line: [18, 5, 6, 6, 5, 5, 8]
+  SPlanning_Velocity: [2.2, 0.3, 15, 10, 3, 3, 144, 5]
+FIRA:
+  Attack_Strategy: [0]
+  Camera: {Focal: 12.800772831983354, High: 650.0}
+  Center: {Front: 270, Inner: 39, Outer: 232, X: 288, Y: 273}
+  Chase_Strategy: [0]
+  Distance:
+    Gap: 20
+    Pixel: [0, 38, 51, 72, 88, 101, 114, 122, 129, 135, 140, 142, 144, 147, 150, 154]
+    Space: [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300]
+  Distance_Settings: [0, 0, 0]
+  Dorsad_Attack: [8, 90, 180, 2, 1, 2]
+  HSV:
+    Bluerange: [260, 212, 255, 183, 255, 36]
+    Greenrange: [197, 97, 255, 143, 255, 45]
+    Redrange: [31, 0, 255, 96, 255, 69]
+    Yellowrange: [117, 59, 255, 87, 255, 85]
+  RobotNumber: 1
+  SPlanning_Velocity: [2.3, 0.3, 100, 60, 15, 5, 144, 5]
+  Scan:
+    Parameter: [4, 3, 36, 104, 129, 210, 87, 93, 206, 212, 325, 331]
+  SideSpeedUp: [0.73, 1.2, 0.7, 5, 17.6]
+  TypeS_Attack: [1.2, 0.2]
+  TypeU_Attack: [0.8, 1, -90, 90, 0.6, 0.3, 10, 20]
+  Zone_Attack: [0.87, 1.55]
+  blackItem: {angle: 3, gray: 40}
+  whiteline: {angle: 4, gray: 100}
+FIRA_Behavior:
+  Attack_Strategy: [5, 1, 0.6]
+  Chase_Strategy: [5, 0.15, 0.2, 5, 0.4]
+  Corner_Kick: [10, 0.45]
+  Side_Speed_UP: [10, 0.45]
+  TypeS_Attack: [20, 1, 1.4]
+  TypeU_Chase: [30, 0.3]
+  Zone_Attack: [0.6]
+StrategySelection: [0, 1, 0, 0, 1, 0]
+camera:
+  image_raw:
+    compressed: {format: jpeg, jpeg_quality: 80, png_level: 9}
+    compressedDepth: {depth_max: 10.0, depth_quantization: 100.0, png_level: 9}
+    theora: {keyframe_frequency: 64, optimize_for: 1, quality: 31, target_bitrate: 800000}
+prosilica_driver: {auto_adjust_stream_bytes_per_second: true, auto_exposure: false,
+  auto_gain: false, auto_whitebalance: false, binning_x: 1, binning_y: 1, exposure: 0.025,
+  exposure_auto_max: 0.5, exposure_auto_target: 50, fixed_rate: 15.0, frame_id: '',
+  gain: 0, gain_auto_max: 19, gain_auto_target: 50, height: 480, stream_bytes_per_second: 45000000,
+  trig_rate: 15.0, trig_timestamp_topic: '', trigger_mode: streaming, whitebalance_blue: 100,
+  whitebalance_red: 100, width: 640, x_offset: 0, y_offset: 0}
+rosbridge_websocket: {address: '', authenticate: false, delay_between_messages: 0,
+  fragment_timeout: 600, max_message_size: None, port: 9090, retry_startup_delay: 5}
+rosdistro: 'indigo
+
+  '
+roslaunch:
+  uris: {host_erebuszz_parallels_virtual_platform__39722: 'http://erebuszz-Parallels-Virtual-Platform:39722/',
+    host_erebuszz_parallels_virtual_platform__44185: 'http://erebuszz-Parallels-Virtual-Platform:44185/',
+    host_erebuszz_parallels_virtual_platform__55975: 'http://erebuszz-Parallels-Virtual-Platform:55975/',
+    host_iclab_desktop__32810: 'http://iclab-desktop:32810/', host_iclab_desktop__33704: 'http://iclab-desktop:33704/',
+    host_iclab_desktop__34731: 'http://iclab-desktop:34731/', host_iclab_desktop__34927: 'http://iclab-desktop:34927/',
+    host_iclab_desktop__35419: 'http://iclab-desktop:35419/', host_iclab_desktop__35632: 'http://iclab-desktop:35632/',
+    host_iclab_desktop__35669: 'http://iclab-desktop:35669/', host_iclab_desktop__37086: 'http://iclab-desktop:37086/',
+    host_iclab_desktop__37291: 'http://iclab-desktop:37291/', host_iclab_desktop__37635: 'http://iclab-desktop:37635/',
+    host_iclab_desktop__37952: 'http://iclab-desktop:37952/', host_iclab_desktop__38813: 'http://iclab-desktop:38813/',
+    host_iclab_desktop__39487: 'http://iclab-desktop:39487/', host_iclab_desktop__39717: 'http://iclab-desktop:39717/',
+    host_iclab_desktop__40099: 'http://iclab-desktop:40099/', host_iclab_desktop__40291: 'http://iclab-desktop:40291/',
+    host_iclab_desktop__40887: 'http://iclab-desktop:40887/', host_iclab_desktop__40917: 'http://iclab-desktop:40917/',
+    host_iclab_desktop__41389: 'http://iclab-desktop:41389/', host_iclab_desktop__41398: 'http://iclab-desktop:41398/',
+    host_iclab_desktop__41683: 'http://iclab-desktop:41683/', host_iclab_desktop__42470: 'http://iclab-desktop:42470/',
+    host_iclab_desktop__42675: 'http://iclab-desktop:42675/', host_iclab_desktop__43578: 'http://iclab-desktop:43578/',
+    host_iclab_desktop__43589: 'http://iclab-desktop:43589/', host_iclab_desktop__43958: 'http://iclab-desktop:43958/',
+    host_iclab_desktop__44303: 'http://iclab-desktop:44303/', host_iclab_desktop__44532: 'http://iclab-desktop:44532/',
+    host_iclab_desktop__45119: 'http://iclab-desktop:45119/', host_iclab_desktop__45849: 'http://iclab-desktop:45849/',
+    host_iclab_desktop__45875: 'http://iclab-desktop:45875/', host_iclab_desktop__46473: 'http://iclab-desktop:46473/',
+    host_iclab_desktop__46807: 'http://iclab-desktop:46807/', host_iclab_desktop__46884: 'http://iclab-desktop:46884/',
+    host_iclab_desktop__47201: 'http://iclab-desktop:47201/', host_iclab_desktop__47367: 'http://iclab-desktop:47367/',
+    host_iclab_desktop__48034: 'http://iclab-desktop:48034/', host_iclab_desktop__48780: 'http://iclab-desktop:48780/',
+    host_iclab_desktop__49101: 'http://iclab-desktop:49101/', host_iclab_desktop__50177: 'http://iclab-desktop:50177/',
+    host_iclab_desktop__50832: 'http://iclab-desktop:50832/', host_iclab_desktop__51423: 'http://iclab-desktop:51423/',
+    host_iclab_desktop__51524: 'http://iclab-desktop:51524/', host_iclab_desktop__51769: 'http://iclab-desktop:51769/',
+    host_iclab_desktop__52049: 'http://iclab-desktop:52049/', host_iclab_desktop__52128: 'http://iclab-desktop:52128/',
+    host_iclab_desktop__52429: 'http://iclab-desktop:52429/', host_iclab_desktop__52439: 'http://iclab-desktop:52439/',
+    host_iclab_desktop__52829: 'http://iclab-desktop:52829/', host_iclab_desktop__52930: 'http://iclab-desktop:52930/',
+    host_iclab_desktop__53154: 'http://iclab-desktop:53154/', host_iclab_desktop__53200: 'http://iclab-desktop:53200/',
+    host_iclab_desktop__54269: 'http://iclab-desktop:54269/', host_iclab_desktop__54630: 'http://iclab-desktop:54630/',
+    host_iclab_desktop__54664: 'http://iclab-desktop:54664/', host_iclab_desktop__55575: 'http://iclab-desktop:55575/',
+    host_iclab_desktop__56381: 'http://iclab-desktop:56381/', host_iclab_desktop__56904: 'http://iclab-desktop:56904/',
+    host_iclab_desktop__57521: 'http://iclab-desktop:57521/', host_iclab_desktop__57572: 'http://iclab-desktop:57572/',
+    host_iclab_desktop__57997: 'http://iclab-desktop:57997/', host_iclab_desktop__58225: 'http://iclab-desktop:58225/',
+    host_iclab_desktop__58335: 'http://iclab-desktop:58335/', host_iclab_desktop__59227: 'http://iclab-desktop:59227/',
+    host_iclab_desktop__59344: 'http://iclab-desktop:59344/', host_iclab_desktop__60328: 'http://iclab-desktop:60328/',
+    host_iclab_desktop__60594: 'http://iclab-desktop:60594/', host_iclab_desktop__60897: 'http://iclab-desktop:60897/'}
+rosversion: '1.11.16
+
+  '
+run_id: 80924fb6-91c7-11e6-acb6-b8aeed7cea2c
