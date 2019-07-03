@@ -1,4 +1,4 @@
-﻿#include "FIRA_pathplan.h"
+#include "FIRA_pathplan.h"
 #include "math.h"
 #include "time.h"
 
@@ -110,12 +110,12 @@ void FIRA_pathplan_class::personalStrategy(int robotIndex,int action){
         break;
     }
 }
-
+//=========================避障挑戰賽=================================
 void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     int r_number = Robot_index;
     double FB_x = env.home[Robot_index].FB_x;
     double FB_y = env.home[Robot_index].FB_y;
-     double FB_imu = env.home[Robot_index].FB_yaw;
+    double FB_imu = env.home[Robot_index].FB_yaw;
     //-------------Distant-----------//
     double close_dis = Distant[0];//60 speed (10) //54  speed (30,10)
     double halfclose_dis = Distant[1];//80
@@ -151,7 +151,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
        // main_vec=60;
     }
     /////////////////////////main vector
-  main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
+    main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
 
     int mainRight=(main_vec+20>90)?90:main_vec+20;
     int mainLeft=(main_vec-20<30)?30:main_vec-20;
@@ -664,41 +664,51 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     static int b_not_good_p=0;
     static int stop_count=0;
     if((int)count%5==1){
-   if(b_not_good_p==not_good_p){ v_fast=v_fast+10;
-   v_fast=(v_fast<100)?v_fast:100;}
-   else{ v_fast= v_fast-10;
-        v_fast=(v_fast>1)?v_fast:1;   }
-    if((forward_dis_average>100)&&(HowManyBoj<=1)&&((40<main_vec)&&(main_vec<80))/*||(condition==box_in_between)*/){
-    v_fast=v_fast+30;v_fast=(v_fast<100)?v_fast:100;
-    }else{v_fast=1;
-        v_fast=(v_fast>1)?v_fast:1;
-        if(condition==box_in_between){
+        if(b_not_good_p==not_good_p){ 
+            v_fast=v_fast+10;
+            v_fast=(v_fast<100)?v_fast:100;
+        } else{ 
+            v_fast= v_fast-10;
+            v_fast=(v_fast>1)?v_fast:1;   
+        }
+        if((forward_dis_average>100)&&(HowManyBoj<=1)&&((40<main_vec)&&(main_vec<80))/*||(condition==box_in_between)*/){
+            v_fast=v_fast+30;v_fast=(v_fast<100)?v_fast:100;
+        }else{
             v_fast=1;
-        }}
+            v_fast=(v_fast>1)?v_fast:1;
+            if(condition==box_in_between){
+                v_fast=1;
+            }
+        }
     }
-   if(b_not_good_p==not_good_p-1){
+    if(b_not_good_p==not_good_p-1){
        stop_count++;
-       if(stop_count>10){v_fast=0; printf("dangerous\n\n\n\n\nno_run_blackitem\n\n\nnopicture_fuck_you\n\n\nrestrat\n\n");}}
-   else{stop_count=0;}
+       if(stop_count>10){
+           v_fast=0; 
+           printf("dangerous\n\n\n\n\nno_run_blackitem\n\n\nnopicture_fuck_you\n\n\nrestrat\n\n");
+        }
+    }else{
+        stop_count=0;
+    }
 
     b_not_good_p=not_good_p;
-   // v_fast=1;
+    // v_fast=1;
     v_fast=(avoid_go==0)?0:v_fast;
     FB_XX=(avoid_go==0)?0:FB_XX;
     motor_place(v_fast,final_angle,r_number);
-//    vision_per.good_angle=good_angle;
-//    vision_per.final_angle=final_angle;
-//    vision_per.far_good_angle=far_good_angle;
-//    vision_per.dd_1=dd_1;
-//    vision_per.dd_2=dd_2;
-//    vision_per.df_1=df_1;
-//    vision_per.df_2=df_2;
-//    tovision.publish(vision_per);
+    // vision_per.good_angle=good_angle;
+    // vision_per.final_angle=final_angle;
+    // vision_per.far_good_angle=far_good_angle;
+    // vision_per.dd_1=dd_1;
+    // vision_per.dd_2=dd_2;
+    // vision_per.df_1=df_1;
+    // vision_per.df_2=df_2;
+    // tovision.publish(vision_per);
     printf("v_fast=%d\n",v_fast);
     printf("ave_gray=%d\n",env.gray_ave);
-//    printf("not_good_p=%d\n",not_good_p);
-//    printf("30_dis=%d\n",env.blackdis[30]);
-//    printf("90_dis=%d\n",env.blackdis[90]);
+    // printf("not_good_p=%d\n",not_good_p);
+    // printf("30_dis=%d\n",env.blackdis[30]);
+    // printf("90_dis=%d\n",env.blackdis[90]);
     printf("count=%lf\n",count);
     printf("main_vec=%d\n",main_vec);
     printf("far_good_angle=%f\n",far_good_angle);
@@ -707,9 +717,9 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     printf("FB_x=%lf\t,FB_y=%lf\t",FB_x,FB_y);
     printf("FB_xx=%lf\t,FB_err=%lf\t",FB_XX,fb_error);
     // printf("FB_x=%lf\t,FB_y=%lf\t,FB_imu=%lf\n",FB_x,FB_y,FB_imu);
-    //   printf("MotorAngle=%lf\n",num_change);
+    // printf("MotorAngle=%lf\n",num_change);
 }
-
+//=========================避障挑戰賽結束=================================
 void FIRA_pathplan_class::strategy_Halt(int Robot_index){
     env.home[Robot_index].v_x = 0;
     env.home[Robot_index].v_y = 0;
@@ -796,3 +806,4 @@ void FIRA_pathplan_class::loadParam(ros::NodeHandle *n){
         //   std::cout << "====================================" << std::endl;
     }*/
 }
+
