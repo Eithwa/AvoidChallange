@@ -164,7 +164,7 @@ int main(int argc, char **argv)
         mbehavior.setEnv(*global_env);
         mbehavior.setTeam(Team_color);
         if((global_env->issimulator)==true){
-//            ROS_INFO("GAGAGAGAGGAGAGGAGAGA");
+//           ROS_INFO("GAGAGAGAGGAGAGGAGAGA");
             for(int i=0; i<PLAYERS_PER_SIDE;i++){
                 mbehavior.readroleAry(i,roleAry[i]);
             }
@@ -228,6 +228,6 @@ int main(int argc, char **argv)
     ros::shutdown();
 
 
-    std::cout << "=======Finish===" << std::endl;
+    std::cout << "=======Finish=======" << std::endl;
     return 0;
 }

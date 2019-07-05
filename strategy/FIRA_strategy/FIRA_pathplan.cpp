@@ -723,7 +723,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     printf("good_angle=%f\n",good_angle);
     printf("final_angle=%lf\n",final_angle);
     printf("FB_x=%lf\t,FB_y=%lf\t",FB_x,FB_y);
-    printf("FB_xx=%lf\t,FB_err=%lf\t",FB_XX,fb_error);
+    printf("FB_xx=%lf\t,FB_err=%lf\t\n",FB_XX,fb_error);
     // printf("FB_x=%lf\t,FB_y=%lf\t,FB_imu=%lf\n",FB_x,FB_y,FB_imu);
     // printf("MotorAngle=%lf\n",num_change);
 }

@@ -1,25 +1,25 @@
 AvoidChallenge:
   ChooseSide: [0, 1, 0.05, 0.04]
   Distant: [60, 90, 250]
-  FinalAngle: 81.06299225118552
-  GoodAngle: 80.0
+  FinalAngle: 72.0
+  GoodAngle: 72.0
   GraySet: 10
   IsSimulator: [0]
   Line: [18, 5, 6, 6, 5, 5, 8]
   SPlanning_Velocity: [100, 0.3, 30, 30, 3, 3, 144, 5]
-  avoid_go: 1
-  dd_1: 90
-  dd_2: 71
-  df_1: 90
-  df_2: 61
-  far_good_angle: 73.0
+  avoid_go: 0
+  dd_1: 85
+  dd_2: 60
+  df_1: 55
+  df_2: 40
+  far_good_angle: 60.0
   kd: 0
   ki: 0
   kp: 1
 FIRA:
   Attack_Strategy: [0]
-  Camera: {Focal: 11.976700769173327, High: 650.0}
-  Center: {Front: 270, Inner: 42, Outer: 216, X: 318, Y: 248}
+  Camera: {Focal: 13.005529372471889, High: 650.0}
+  Center: {Front: 270, Inner: 42, Outer: 236, X: 298, Y: 252}
   Chase_Strategy: [0]
   Corner_Kick: [1.2, 60, 90, 50]
   Distance:
@@ -31,7 +31,7 @@ FIRA:
   HSV:
     Bluerange: [360, 0, 255, 0, 255, 0]
     Greenrange: [360, 0, 255, 0, 255, 0]
-    Redrange: [51, 0, 255, 105, 255, 11]
+    Redrange: [33, 360, 213, 54, 208, 69]
     Whiterange: [360, 0, 255, 0, 255, 0]
     Yellowrange: [360, 0, 255, 0, 255, 0]
   RobotNumber: 1
@@ -1441,13 +1441,13 @@ FIRA:
       274, 351, 265, 356, 265, 361, 266, 366, 266, 371, 266, 376, 267, 381, 267, 386,
       267, 391, 268, 353, 263, 358, 263, 363, 263, 368, 263, 373, 263, 378, 263, 383,
       263, 388, 263, 393, 263]
-    Parameter: [4, 3, 41, 112, 138, 216, 44, 48, 163, 167, 283, 287]
+    Parameter: [4, 3, 41, 112, 138, 240, 87, 93, 208, 214, 326, 332]
   SideSpeedUp: [0.73, 1.2, 0.7, 5, 17.6]
   TypeS_Attack: [1.2, 0.2]
   TypeU_Attack: [0.8, 1, -90, 90, 0.6, 0.3, 10, 20]
   Zone_Attack: [0.87, 1.55]
-  blackItem: {angle: 3, gray: 21}
-  gray_ave: -272215663
+  blackItem: {angle: 3, gray: 23}
+  gray_ave: 10
   picture_m: 576
   whiteline: {angle: 4, gray: 100}
 FIRA_Behavior:
@@ -1535,26 +1535,31 @@ roslaunch:
     host_erebuszz_parallels_virtual_platform__39722: 'http://erebuszz-Parallels-Virtual-Platform:39722/',
     host_erebuszz_parallels_virtual_platform__44185: 'http://erebuszz-Parallels-Virtual-Platform:44185/',
     host_erebuszz_parallels_virtual_platform__55975: 'http://erebuszz-Parallels-Virtual-Platform:55975/',
+    host_iarc__34853: 'http://iarc:34853/', host_iarc__38679: 'http://iarc:38679/',
+    host_iarc__39708: 'http://iarc:39708/', host_iarc__44335: 'http://iarc:44335/',
+    host_iarc__45942: 'http://iarc:45942/', host_iclab__33176: 'http://iclab:33176/',
     host_iclab__33262: 'http://iclab:33262/', host_iclab__33519: 'http://iclab:33519/',
     host_iclab__33650: 'http://iclab:33650/', host_iclab__34122: 'http://iclab:34122/',
-    host_iclab__34959: 'http://iclab:34959/', host_iclab__35732: 'http://iclab:35732/',
+    host_iclab__35708: 'http://iclab:35708/', host_iclab__35732: 'http://iclab:35732/',
     host_iclab__35908: 'http://iclab:35908/', host_iclab__36197: 'http://iclab:36197/',
     host_iclab__36243: 'http://iclab:36243/', host_iclab__37604: 'http://iclab:37604/',
-    host_iclab__37775: 'http://iclab:37775/', host_iclab__38703: 'http://iclab:38703/',
-    host_iclab__39088: 'http://iclab:39088/', host_iclab__39429: 'http://iclab:39429/',
-    host_iclab__39516: 'http://iclab:39516/', host_iclab__39608: 'http://iclab:39608/',
-    host_iclab__40412: 'http://iclab:40412/', host_iclab__40609: 'http://iclab:40609/',
-    host_iclab__41334: 'http://iclab:41334/', host_iclab__41476: 'http://iclab:41476/',
-    host_iclab__41532: 'http://iclab:41532/', host_iclab__42164: 'http://iclab:42164/',
-    host_iclab__42244: 'http://iclab:42244/', host_iclab__42479: 'http://iclab:42479/',
-    host_iclab__43229: 'http://iclab:43229/', host_iclab__43319: 'http://iclab:43319/',
-    host_iclab__43837: 'http://iclab:43837/', host_iclab__43952: 'http://iclab:43952/',
-    host_iclab__44004: 'http://iclab:44004/', host_iclab__44032: 'http://iclab:44032/',
+    host_iclab__37775: 'http://iclab:37775/', host_iclab__38095: 'http://iclab:38095/',
+    host_iclab__38703: 'http://iclab:38703/', host_iclab__39088: 'http://iclab:39088/',
+    host_iclab__39429: 'http://iclab:39429/', host_iclab__39516: 'http://iclab:39516/',
+    host_iclab__39608: 'http://iclab:39608/', host_iclab__39641: 'http://iclab:39641/',
+    host_iclab__39810: 'http://iclab:39810/', host_iclab__40412: 'http://iclab:40412/',
+    host_iclab__40609: 'http://iclab:40609/', host_iclab__41334: 'http://iclab:41334/',
+    host_iclab__41476: 'http://iclab:41476/', host_iclab__41532: 'http://iclab:41532/',
+    host_iclab__42164: 'http://iclab:42164/', host_iclab__42244: 'http://iclab:42244/',
+    host_iclab__42479: 'http://iclab:42479/', host_iclab__43229: 'http://iclab:43229/',
+    host_iclab__43319: 'http://iclab:43319/', host_iclab__43837: 'http://iclab:43837/',
+    host_iclab__43952: 'http://iclab:43952/', host_iclab__44004: 'http://iclab:44004/',
+    host_iclab__44032: 'http://iclab:44032/', host_iclab__44241: 'http://iclab:44241/',
     host_iclab__44620: 'http://iclab:44620/', host_iclab__44632: 'http://iclab:44632/',
-    host_iclab__45001: 'http://iclab:45001/', host_iclab__45267: 'http://iclab:45267/',
-    host_iclab__45666: 'http://iclab:45666/', host_iclab__45925: 'http://iclab:45925/',
-    host_iclab__46070: 'http://iclab:46070/', host_iclab__46226: 'http://iclab:46226/',
-    host_iclab__46288: 'http://iclab:46288/', host_iclab__46544: 'http://iclab:46544/',
+    host_iclab__45267: 'http://iclab:45267/', host_iclab__45666: 'http://iclab:45666/',
+    host_iclab__45925: 'http://iclab:45925/', host_iclab__46070: 'http://iclab:46070/',
+    host_iclab__46226: 'http://iclab:46226/', host_iclab__46288: 'http://iclab:46288/',
+    host_iclab__46544: 'http://iclab:46544/', host_iclab__46883: 'http://iclab:46883/',
     host_iclab_desktop__32798: 'http://iclab-desktop:32798/', host_iclab_desktop__32810: 'http://iclab-desktop:32810/',
     host_iclab_desktop__32839: 'http://iclab-desktop:32839/', host_iclab_desktop__32879: 'http://iclab-desktop:32879/',
     host_iclab_desktop__32931: 'http://iclab-desktop:32931/', host_iclab_desktop__32958: 'http://iclab-desktop:32958/',
