@@ -124,6 +124,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     static int RedLine = 0;
     ////主要向量範圍
     static int main_vec=60;
+
     ///////redline
     static double fb_error=0;
     static double FB_XX=0;
@@ -133,16 +134,18 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     fb_error=FB_x;
     int r_place_x = -FB_XX*100;
     r_place_x= (r_place_x==0)?very_small:r_place_x;
-  //  main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
+    //  main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
 
     //////
     static int main_go_cont=99;
     if((RedLine!=0)||(main_go_cont<13)){//speed17 sec20 speed25 sec15
         if(RedLine==1){
-            main_vec=80;main_go_cont=0;
+            main_vec=80;
+            main_go_cont=0;
         }
         else if(RedLine==2){
-            main_vec=40;main_go_cont=0;
+            main_vec=40;
+            main_go_cont=0;
         }else{
             main_go_cont++;
         }
@@ -152,7 +155,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     /////////////////////////main vector
     main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
-
+    //<<<<<<<<<<<<<<<<<<<<<HEAD  Outer dynamic window<<<<<<<<<<<<<<<<<<<<<
     int mainRight=(main_vec+20>90)?90:main_vec+20;
     int mainLeft=(main_vec-20<30)?30:main_vec-20;
     int Boj_place[10][2]={0},Ok_place[30][2];
@@ -218,21 +221,23 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     df_1=Ok_place[right_ok][1];
     df_2=Ok_place[right_ok][0];
+
     far_good_angle=(right_ok==0)?90:(df_1+df_2)/2;
     far_good_angle=(far_good_angle+main_vec)/2;
-
     ///////////////////////////////////////////////////2222222222222
+    //>>>>>>>>>>>>>>>>>>>>>END   Outer dynamic window>>>>>>>>>>>>>>>>>>>>>
+    //<<<<<<<<<<<<<<<<<<<<<HEAD  Inner dynamic window<<<<<<<<<<<<<<<<<<<<<
     //////////////////////////////////////////////////1
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     HowManyBoj=0;HowManyOk=0;
 
     mainRight=(int)(far_good_angle+20>90)?90:far_good_angle+20;
     mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
-        far_good_angle=main_vec;
-        mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
-        mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
-//        if(main_vec==40){mainRight=60;mainLeft=30;}
-//        if(main_vec==80){mainRight=90;mainLeft=60;}
+    far_good_angle=main_vec;
+    mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
+    mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
+    // if(main_vec==40){mainRight=60;mainLeft=30;}
+    // if(main_vec==80){mainRight=90;mainLeft=60;}
 
     for(int i= mainLeft ; i<=mainRight ; i++){
         b_ok=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?0:1;
@@ -307,65 +312,68 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     dd_1=Ok_place[right_ok][1];
     dd_2=Ok_place[right_ok][0];
     good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+    //>>>>>>>>>>>>>>>>>>>>>END   Inner dynamic window>>>>>>>>>>>>>>>>>>>>>
     two_ok_right=good_angle;
     if(intoflag==1){
-           printf("qpqpqpqpqpqpqpqpqpqpqpqpqpqp\n");
-       intoflag=(count-okokcont<14)?1:0;
-     for(int i=1;i<=HowManyOk ;i++){
-       dd_1=Ok_place[i][1];
-       dd_2=Ok_place[i][0];
-       test_angle=(int)(i==0)?90:(dd_1+dd_2)/2;
-        std::cout<<test_angle<<"\t"<<tem_right_ok<<"\n";
-       if(near_angle>abs(test_angle-tem_right_ok)){
-           near_angle=abs(test_angle-tem_right_ok);
-           good_angle=test_angle;
-           std::cout<<near_angle<<"/////"<<good_angle<<"\n";
-       }
-     }
+        printf("qpqpqpqpqpqpqpqpqpqpqpqpqpqp\n");
+        intoflag=(count-okokcont<14)?1:0;
+        for(int i=1;i<=HowManyOk ;i++){
+            dd_1=Ok_place[i][1];
+            dd_2=Ok_place[i][0];
+            test_angle=(int)(i==0)?90:(dd_1+dd_2)/2;
+            std::cout<<test_angle<<"\t"<<tem_right_ok<<"\n";
+            if(near_angle>abs(test_angle-tem_right_ok)){
+                near_angle=abs(test_angle-tem_right_ok);
+                good_angle=test_angle;
+                std::cout<<near_angle<<"/////"<<good_angle<<"\n";
+            }
+        }
     }else if((abs((int)good_angle-b_goodangle)>28)&&(intoflag==0)){
-
-       if(main_vec<60){
-           for(int i=1;i<=HowManyOk ;i++){
-           if(Ok_place[i][1]-Ok_place[i][0]>5){
-               right_ok=i;
-          printf("qqqqqqqqqqqqqqq\n");
-          intoflag=1;
-          okokcont=count;
-          dd_1=Ok_place[right_ok][1];
-          dd_2=Ok_place[right_ok][0];
-          good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
-            tem_right_ok=good_angle;
-               break;
-           }
-           tem_right_ok=good_angle;
+        if(main_vec<60){
+            for(int i=1;i<=HowManyOk ;i++){
+                if(Ok_place[i][1]-Ok_place[i][0]>5){
+                    right_ok=i;
+                    printf("qqqqqqqqqqqqqqq\n");
+                    intoflag=1;
+                    okokcont=count;
+                    dd_1=Ok_place[right_ok][1];
+                    dd_2=Ok_place[right_ok][0];
+                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+                    tem_right_ok=good_angle;
+                    break;
+                }
+                tem_right_ok=good_angle;
            }
        }else{
            for(int i=HowManyOk;i>=1 ;i--){
-               if(Ok_place[i][1]-Ok_place[i][0]>5){
-                   right_ok=i;
-                  printf("ppppppppppppp\n");
-                  intoflag=1;
-                  okokcont=count;
-                  dd_1=Ok_place[right_ok][1];
-                  dd_2=Ok_place[right_ok][0];
-                  good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+                if(Ok_place[i][1]-Ok_place[i][0]>5){
+                    right_ok=i;
+                    printf("ppppppppppppp\n");
+                    intoflag=1;
+                    okokcont=count;
+                    dd_1=Ok_place[right_ok][1];
+                    dd_2=Ok_place[right_ok][0];
+                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
                     tem_right_ok=good_angle;
-                   break;
-               }
-               tem_right_ok=good_angle;
-               }
+                    break;
+                }
+                tem_right_ok=good_angle;
+            }
        }
       // good_angle=b_goodangle;
     }
     b_goodangle=two_ok_right;
 
-//    dd_1=Ok_place[right_ok][1];
-//    dd_2=Ok_place[right_ok][0];
-//    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+    dd_1=Ok_place[right_ok][1];
+    dd_2=Ok_place[right_ok][0];
+    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
 
-//    if(BoxInFront==1){
-//        if(env.blackdis[(int)good_angle]<60){
-//        good_angle=(main_vec<60)?30:90;}                 printf("qqqqqqqqqqqqqqq\n");}
+    // if(BoxInFront==1){
+    //     if(env.blackdis[(int)good_angle]<60){
+    //         good_angle=(main_vec<60)?30:90;
+    //     }                 
+    //     printf("qqqqqqqqqqqqqqq\n");
+    // }
     /// //////////////////////////////////////////////11111111111111
     ///////////////////////////////////////////////////s
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
@@ -429,7 +437,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         printf("Boj=%d,angle=%d,dis=%d\t",i,Obj_angle_text,env.blackdis[Obj_angle_text]);
         std::cout<<Boj_place[i][1]<<"\t"<<Boj_place[i][0]<<"\n";
     }
-    ////////////////////////////////////////////////////////////test for strage
+    ////////////////////////////////////////////////////////////test for strategy
     int left_dis_sum = 0;
     int left_dis_average = 0;
     int left_average_line = 0;
@@ -524,8 +532,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     dis_sum=0;
     if(env.reddis[90]<100){
-    FB_XX=(env.reddis[90]!=0)?(150-env.reddis[90])*0.01:FB_XX;
-    printf("gooooodredline\n");
+        FB_XX=(env.reddis[90]!=0)?(150-env.reddis[90])*0.01:FB_XX;
+        printf("gooooodredline\n");
     }
     if(env.reddis[30]<100){
         FB_XX=(env.reddis[30]!=0)?(env.reddis[30]-150)*0.01:FB_XX;
@@ -618,7 +626,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         printf("red front========  ");
         b_forward_dis_sum=smallfront;
         break;
-        case pid_control:
+    case pid_control:
         before_error_x=Fx_pid;
         Fx_pid=0;Fy_pid=0;
         for(int i=1 ; i<=HowManyBoj ;i++){ //repulsive force

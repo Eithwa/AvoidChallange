@@ -175,25 +175,24 @@ public:
     int black_gray,black_angle;
 
     void get_blackItem(){
-      black_gray = 0;
-      black_angle = 0;
-      nh->getParam("/FIRA/blackItem/gray",black_gray);
-      nh->getParam("/FIRA/blackItem/angle",black_angle);
-
+        black_gray = 0;
+        black_angle = 0;
+        nh->getParam("/FIRA/blackItem/gray",black_gray);
+        nh->getParam("/FIRA/blackItem/angle",black_angle);
     }
     double good_angle,final_angle,far_good_angle;
     int dd_1,dd_2,df_2,df_1;
     void getline(){
-    good_angle=0;
-    final_angle=0;
-    dd_1=0;dd_2=0;far_good_angle=0;df_1=0;df_2=0;
-    nh->getParam("/AvoidChallenge/far_good_angle",far_good_angle);
-    nh->getParam("/AvoidChallenge/df_1",df_1);
-    nh->getParam("/AvoidChallenge/df_2",df_2);
-    nh->getParam("/AvoidChallenge/GoodAngle",good_angle);
-    nh->getParam("/AvoidChallenge/FinalAngle",final_angle);
-    nh->getParam("/AvoidChallenge/dd_1",dd_1);
-    nh->getParam("/AvoidChallenge/dd_2",dd_2);
+        good_angle=0;
+        final_angle=0;
+        dd_1=0;dd_2=0;far_good_angle=0;df_1=0;df_2=0;
+        nh->getParam("/AvoidChallenge/far_good_angle",far_good_angle);
+        nh->getParam("/AvoidChallenge/df_1",df_1);
+        nh->getParam("/AvoidChallenge/df_2",df_2);
+        nh->getParam("/AvoidChallenge/GoodAngle",good_angle);
+        nh->getParam("/AvoidChallenge/FinalAngle",final_angle);
+        nh->getParam("/AvoidChallenge/dd_1",dd_1);
+        nh->getParam("/AvoidChallenge/dd_2",dd_2);
     }
 
     //--------------------------------------------------
