@@ -5,7 +5,8 @@ set (PROJECT_VERSION_MAJOR 0)
 set (PROJECT_VERSION_MINOR 7)
 set (PROJECT_VERSION_PATCH 0)
 
-add_subdirectory(../libfreespace libfreespace)
+#add_subdirectory(../libfreespace libfreespace) ##2018/05/28 Comment. Don't know why use ../
+add_subdirectory(libfreespace libfreespace)
 
 set(LIBFREESPACE_LIB_TYPE "${LIBFREESPACE_LIB_TYPE_DEFAULT}" CACHE INTERNAL "")
 
@@ -24,7 +25,8 @@ endif()
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
-  genmsg    ##可以產生msg
+  #genmsg    ##可以產生msg
+  message_generation
 )
 
 ## Generate messages in the 'msg' folder
