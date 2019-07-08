@@ -1162,7 +1162,7 @@ void interface_window::red_binarization(Mat &Red_Mask)
     }
     convertTo3Channels(mask);
     //開操作 (去除一些噪點)
-    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
+    Mat element = getStructuringElement(MORPH_RECT, Size(2, 2));
     morphologyEx(mask, mask, MORPH_OPEN, element);
     
     red.copyTo(dst, mask);

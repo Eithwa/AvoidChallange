@@ -508,35 +508,44 @@ private:
 
     }
     void subBlackObject(const std_msgs::Int32MultiArray::ConstPtr &msg){
-        int All_Line_distance[360];
-        int j=60;
+        int All_Line_distance[360];        
         for(int i=0; i<360/Blackangle; i++){
              All_Line_distance[i]= msg-> data[i];
         }
-        for(int i=0; i<=60; i++){
-            global_env->blackdis[j] =  All_Line_distance[i];
-            j--;
-        }
-        j=119;
-        for(int i=61; i<=119; i++){
-            global_env->blackdis[j] =  All_Line_distance[i];
-            j--;
+        //blackdis[60]轉為All_Line_distance[0](車頭角)
+        // int j=60;
+        // for(int i=0; i<=60; i++){
+        //     global_env->blackdis[j] =  All_Line_distance[i];
+        //     j--;
+        // }
+        // j=119;
+        // for(int i=61; i<=119; i++){
+        //     global_env->blackdis[j] =  All_Line_distance[i];
+        //     j--;
+        // }
+        for(int i = 0; i < 120; i++){
+            global_env->blackdis[((119-i)+120-59)%120] = All_Line_distance[i];
+            //std::cout<< i << "  "<<((119-i)+120-59)%120<<std::endl;
         }
     }
     void subredObject(const std_msgs::Int32MultiArray::ConstPtr &msg){
         int All_Line_distance[360];
-        int j=60;
         for(int i=0; i<360/Blackangle; i++){
              All_Line_distance[i]= msg-> data[i];
         }
-        for(int i=0; i<=60; i++){
-            global_env->reddis[j] =  All_Line_distance[i];
-            j--;
-        }
-        j=119;
-        for(int i=61; i<=119; i++){
-            global_env->reddis[j] =  All_Line_distance[i];
-            j--;
+        // int j=60;
+        // for(int i=0; i<=60; i++){
+        //     global_env->reddis[j] =  All_Line_distance[i];
+        //     j--;
+        // }
+        // j=119;
+        // for(int i=61; i<=119; i++){
+        //     global_env->reddis[j] =  All_Line_distance[i];
+        //     j--;
+        // }
+        for(int i = 0; i < 120; i++){
+            global_env->reddis[((119-i)+120-59)%120] = All_Line_distance[i];
+            //std::cout<< i << "  "<<((119-i)+120-59)%120<<std::endl;
         }
     }
     /*void subBlackObject(const std_msgs::Int32MultiArray::ConstPtr &msg){

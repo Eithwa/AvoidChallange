@@ -1,16 +1,16 @@
 AvoidChallenge:
   ChooseSide: [0, 1, 0.05, 0.04]
   Distant: [60, 90, 250]
-  FinalAngle: 72.0
-  GoodAngle: 72.0
+  FinalAngle: 84.67523046293314
+  GoodAngle: 80.0
   GraySet: 10
   IsSimulator: [0]
   Line: [18, 5, 6, 6, 5, 5, 8]
   SPlanning_Velocity: [100, 0.3, 30, 30, 3, 3, 144, 5]
   avoid_go: 0
   dd_1: 85
-  dd_2: 60
-  df_1: 55
+  dd_2: 75
+  df_1: 47
   df_2: 40
   far_good_angle: 60.0
   kd: 0
@@ -18,8 +18,8 @@ AvoidChallenge:
   kp: 1
 FIRA:
   Attack_Strategy: [0]
-  Camera: {Focal: 13.005529372471889, High: 650.0}
-  Center: {Front: 270, Inner: 42, Outer: 236, X: 298, Y: 252}
+  Camera: {Focal: 15.225192237275724, High: 650.0}
+  Center: {Front: 335, Inner: 46, Outer: 280, X: 299, Y: 269}
   Chase_Strategy: [0]
   Corner_Kick: [1.2, 60, 90, 50]
   Distance:
@@ -31,7 +31,7 @@ FIRA:
   HSV:
     Bluerange: [360, 0, 255, 0, 255, 0]
     Greenrange: [360, 0, 255, 0, 255, 0]
-    Redrange: [33, 360, 213, 54, 208, 69]
+    Redrange: [36, 301, 172, 71, 212, 54]
     Whiterange: [360, 0, 255, 0, 255, 0]
     Yellowrange: [360, 0, 255, 0, 255, 0]
   RobotNumber: 1
@@ -1447,7 +1447,7 @@ FIRA:
   TypeU_Attack: [0.8, 1, -90, 90, 0.6, 0.3, 10, 20]
   Zone_Attack: [0.87, 1.55]
   blackItem: {angle: 3, gray: 23}
-  gray_ave: 10
+  gray_ave: 11
   picture_m: 576
   whiteline: {angle: 4, gray: 100}
 FIRA_Behavior:
@@ -1459,9 +1459,26 @@ FIRA_Behavior:
   TypeU_Chase: [30, 0.3]
   Zone_Attack: [0.6]
 StrategySelection: [0, 1, 0, 0, 1, 0]
+camera:
+  image_raw:
+    compressed: {format: jpeg, jpeg_quality: 80, png_level: 9}
+    compressedDepth: {depth_max: 10.0, depth_quantization: 100.0, png_level: 9}
+    theora: {keyframe_frequency: 64, optimize_for: 1, quality: 31, target_bitrate: 800000}
 prosilica_driver: {auto_adjust_stream_bytes_per_second: true, auto_exposure: false,
   auto_gain: false, auto_whitebalance: false, binning_x: 1, binning_y: 1, exposure: 0.016666,
   exposure_auto_max: 0.5, exposure_auto_target: 50, fixed_rate: 15.0, frame_id: '',
   gain: 0, gain_auto_max: 19, gain_auto_target: 50, height: 480, stream_bytes_per_second: 45000000,
   trig_rate: 15.0, trig_timestamp_topic: '', trigger_mode: streaming, whitebalance_blue: 100,
   whitebalance_red: 100, width: 640, x_offset: 0, y_offset: 0}
+rosbridge_websocket: {address: '', authenticate: false, delay_between_messages: 0,
+  fragment_timeout: 600, max_message_size: None, port: 9090, retry_startup_delay: 5}
+rosdistro: 'indigo
+
+  '
+roslaunch:
+  uris: {host_iclab__37149: 'http://iclab:37149/', host_iclab__43566: 'http://iclab:43566/',
+    host_iclab__44040: 'http://iclab:44040/', host_iclab__44832: 'http://iclab:44832/'}
+rosversion: '1.11.21
+
+  '
+run_id: 81118ad6-a152-11e9-998a-b8aeed7bc249

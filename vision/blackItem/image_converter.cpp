@@ -55,7 +55,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr &msg)
         Red_Mask = Main_frame.clone();
         static double StartTime = ros::Time::now().toSec();
         double EndTime = ros::Time::now().toSec();
-        if(StartTime-EndTime>2){
+        if(EndTime-StartTime>2){
             get_Camera();
             get_center();
             get_distance();
@@ -109,7 +109,7 @@ double ImageConverter::Rate()
         if (dt != 0)
         {
             frame_rate = (1000000000.0 / dt) * ALPHA + frame_rate * (1.0 - ALPHA);
-            cout << "FPS: " << frame_rate << endl;
+            //cout << "FPS: " << frame_rate << endl;
         }
 
         frame_counter = 0;
@@ -373,7 +373,7 @@ void ImageConverter::red_binarization()
     }
     convertTo3Channels(mask);
     //開操作 (去除一些噪點)
-    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
+    Mat element = getStructuringElement(MORPH_RECT, Size(2, 2));
     morphologyEx(mask, mask, MORPH_OPEN, element);
     
     white.copyTo(dst, (cv::Mat::ones(mask.size(), mask.type()) * 255 - mask));
@@ -439,8 +439,8 @@ void ImageConverter::red_line()
     mpicture.publish(to_strategy);
 
     ///////////////////Show view/////////////////
-    //cv::imshow("red_line", Red_Mask);
-    //cv::waitKey(1);
+    cv::imshow("red_line", Red_Mask);
+    cv::waitKey(1);
     /////////////////////////////////////////////
 }
 double ImageConverter::Omni_distance(double dis_pixel)
@@ -500,4 +500,5 @@ void ImageConverter::get_whitedata()
     nh.getParam("/FIRA/blackItem/gray", black_gray);
     nh.getParam("/FIRA/blackItem/angle", black_angle);
     nh.getParam("/FIRA/HSV/Redrange", red);
+    //std::cout<<red[0]<<" "<<red[1]<<" "<<red[2]<<" "<<red[3]<<" "<<red[4]<<" "<<red[5]<<std::endl;
 }

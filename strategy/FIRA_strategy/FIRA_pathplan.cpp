@@ -19,18 +19,7 @@ void FIRA_pathplan_class::setEnv(Environment iEnv){
     }
 }
 //end  ---simulator---
-void FIRA_pathplan_class::motor_place(int v,double num,int r_num){
-    num_change=num*3-270;//                 60 //num為影像掃描線條數（三度一條) 定車頭角為180
-    go_where_x=v*cos(num_change*deg2rad);// 50               70
-    go_where_y=v*sin(num_change*deg2rad);
-    env.home[r_num].v_x = -go_where_x;
-    env.home[r_num].v_y = - go_where_y;
-    env.home[r_num].v_yaw = 0;
-//    if((9<env.home[r_num].FB_yaw)&&(env.home[r_num].FB_yaw<180))
-//    {env.home[r_num].v_yaw = -2;}
-//    else if((180<env.home[r_num].FB_yaw)&&(env.home[r_num].FB_yaw<351)){env.home[r_num].v_yaw = 2;}
-//    else{env.home[r_num].v_yaw=0;}
-}
+
 //車頭追球   
 void FIRA_pathplan_class::strategy_head2ball(int i){
     Vector3D ball = env.currentBall.pos;
@@ -151,7 +140,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
 
     static int RedLine = 0; //紅線判斷flag 1left 2right
     ////主要向量範圍
-    static int main_vec=60;//為什麼
+    static int main_vec=60;//為什麼 60*3 定180為車頭角
 
     ///////redline
     //==========這邊有疑問========
@@ -421,7 +410,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     // }
     /// //////////////////////////////////////////////11111111111111
     ///////////////////////////////////////////////////s
-    //這邊計算的是special case？ 算出的數值會在哪邊使用?  斥力引力使用
+    //這邊計算的是special case？ 算出的數值會在哪邊使用?  引力斥力使用
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     HowManyBoj=0;HowManyOk=0;
     int ssm_r,ssm_l;
@@ -491,6 +480,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     std::cout<<"=========ssssssss end========\n";
     ////////////////////////////////////////////////////////////test for strategy
+    
     int left_dis_sum = 0;
     int left_dis_average = 0;
     int left_average_line = 0;
@@ -545,20 +535,11 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     printf("forward_dis_average=%d\n",forward_dis_average);
     //=======================================
-
-    int dis_sum = 0;
-    int dis_average = 0;
-    int red_dis_average = 0;
-    int angle_average;
-    int dangerous_dis =(int)close_dis;
-    double Fx,Fy = 0;
-    int F_Max = (int)close_dis;
-    int Obj_angle,ignore_average_line=0 ;
     int condition;//0::0引力  1::1special box_middle
+    int dis_sum = 0;
+    int red_dis_average = 0;
     int red_line_dangerous_dis =70;
-    int small_dis_box=999;
-    double final_Fx = 0;
-    double final_Fy = 0;
+    int dangerous_dis =(int)close_dis; //dangerous_dis = close_dis //60 speed (10) //54  speed (30,10)
     RedLine = 0; //紅線判斷flag 1left 2right
 
     left_average_line = 0;
@@ -585,7 +566,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         }
     }
     if(right_average_line > 3){ //at least 2 lines
-        red_dis_average = dis_sum/(right_average_line);
+        red_dis_average = dis_sum/(right_average_line);//左邊紅線距離被右邊取代？ 引力斥力系統無法偵測左邊紅線正確距離
         RedLine = 2;//red in right
         FB_XX=(red_dis_average!=0)?(150-red_dis_average)*0.01:FB_XX;
     }
@@ -606,13 +587,24 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         condition=box_in_between;
     }/*else if((smallfront <=42)&&(main_vec==40||main_vec==80)){
         condition = red_line;
-    }*//*else if (intoflag==1||intoflag==2){condition=cannot_chose;}*/
-    else{
+    }*//*else if (intoflag==1||intoflag==2){
+        condition=cannot_chose;
+    }*/else{
         condition=N_S;
     }
 
     count+=1;
     dis_sum=0;
+    int dis_average = 0;
+    int angle_average;
+    double Fx,Fy = 0;
+    int F_Max = (int)close_dis;
+    int Obj_angle,ignore_average_line=0 ;
+
+    int small_dis_box=999;
+    double final_Fx = 0;
+    double final_Fy = 0;
+
     static double before_error_x=0,I_error_x=0;
     static double Fx_pid,Fy_pid,PID_I_tem[20]={0} ;
     double error_x,D_error;
@@ -620,57 +612,62 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
    // condition=pid_control;
     switch(condition){
     case N_S://引力斥力 
-        //dangerous_dis = close_dis //60 speed (10) //54  speed (30,10)
         for(int i=1 ; i<=HowManyBoj ;i++){ //repulsive force 斥力
             for(int j=Boj_place[i][0] ; j<=Boj_place[i][1] ; j++){
-                if(env.blackdis[j]>=close_dis){
-                    ignore_average_line++;
+                if(env.blackdis[j]>=close_dis){//障礙物線大於 判斷距離
+                    ignore_average_line++;//忽略線++
                 }else{
-                    dis_sum+=env.blackdis[j];
+                    dis_sum+=env.blackdis[j];//計算此障礙物距離總和
                 }
-               small_dis_box=(small_dis_box<env.blackdis[j])?small_dis_box:env.blackdis[j];
+                small_dis_box=(small_dis_box<env.blackdis[j])?small_dis_box:env.blackdis[j];//找出最小障礙物距離
             }
-            if(Boj_place[i][1]-Boj_place[i][0]+1!=ignore_average_line){
-                dis_average = dis_sum/(Boj_place[i][1]-Boj_place[i][0]+1-ignore_average_line);
+            //==============未使用?==============
+            if(Boj_place[i][1]-Boj_place[i][0]+1!=ignore_average_line){//若障礙物不是整個被忽略
+                dis_average = dis_sum/(Boj_place[i][1]-Boj_place[i][0]+1-ignore_average_line);//計算平均障礙物距離
             }else{
                 dis_average=999;
             }
+            //==================================
             dis_average=small_dis_box;
             //dis_average=(dis_average<33)?0:dis_average;
+            //======不需更新=======
             small_dis_box=999;
             ignore_average_line=0;
+            //===================
 
-            if(dis_average<=dangerous_dis){
-                Obj_angle = (Boj_place[i][0]+Boj_place[i][1])/2;
-                printf("warn_B=%d,angle=%d\t,dis=%d\t",i,Obj_angle,dis_average);
+            if(dis_average<=dangerous_dis){//dangerous_dis = close_dis //60 speed (10) //54  speed (30,10)
+                Obj_angle = (Boj_place[i][0]+Boj_place[i][1])/2;//遠離障礙物平均角度 （是否需改成最近位置角度?)
+                printf("障礙物靠近 warn_B=%d,angle=%d\t,dis=%d\t",i,Obj_angle,dis_average);
                 angle_average = (90-(Obj_angle))*3;//(90-(56+50)/2)*3=111
-                if(((Obj_angle<30)||(Obj_angle>90))/*&&((main_vec!=80)&&(main_vec!=40))*/){
-                    Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad*0.8);//[53]->angle 53
+                if(((Obj_angle<30)||(Obj_angle>90))/*&&((main_vec!=80)&&(main_vec!=40))*/){//障礙物角度大於左右90度 引力斥力0.8
+                    Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad)*0.8;//[53]->angle 53  //角度乘以0.8？
                     Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad)*0.8;
                 }else{
                     Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad);//[53]->angle 53
                     Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad);
                 }
-                printf("Fx=%lf,Fy=%lf\n",Fx,Fy);
+                printf("Fx=%lf,Fy=%lf\n",Fx,Fy);//輸出斥力大小
             }
             dis_sum=0;
             dis_average=999;
         }
         if(RedLine!=0){//有偵測到紅線
-            printf("RedLine=%d\tred_dis_average=%d\n",RedLine,red_dis_average);
+            printf("紅線靠近 RedLine=%d\tred_dis_average=%d\n",RedLine,red_dis_average);
             if(RedLine==2){
                 red_dis_average=red_line_dangerous_dis-red_dis_average;
             }else{
                 red_dis_average=red_dis_average-red_line_dangerous_dis;
             }
         }
+        //==============================
         final_Fx = F_Max*cos((90-(good_angle))*3*deg2rad)-adjust_ojF*Fx-(0.2*red_dis_average);
         final_Fy = F_Max*sin((90-(good_angle))*3*deg2rad)-adjust_ojF*Fy;
         final_angle= 90-(atan2(final_Fy,final_Fx)*180/pi)/3;
-        printf("S/N========  ");
+        printf("引力斥力 S/N========  ");
+        //==============================
         break;
     case box_in_between:
-        if(left_dis_average < right_dis_average){
+        if(left_dis_average < right_dis_average){//走在兩個箱子正中間 如果遇到兩邊箱子不平行會撞到?
             final_angle = 90-(90-(right_dis_average-left_dis_average))/3;//turn right
         }else if(left_dis_average > right_dis_average){
             final_angle = 90-(90+(left_dis_average-right_dis_average))/3;//turn left
@@ -695,6 +692,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     case pid_control:
         before_error_x=Fx_pid;
         Fx_pid=0;Fy_pid=0;
+        //============引力斥力=============
         for(int i=1 ; i<=HowManyBoj ;i++){ //repulsive force
             for(int j=Boj_place[i][0] ; j<=Boj_place[i][1] ; j++){
                 if(env.blackdis[j]>=close_dis){
@@ -716,6 +714,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
             Fy_pid += (dangerous_dis-dis_average)*sin(angle_average*deg2rad);
             dis_sum=0;
         }
+        //================================
         I_error_x=0;
         PID_I_tem[(int)count%20]=Fx_pid;
         for(int i=0;i<19;i++){
@@ -802,7 +801,37 @@ void FIRA_pathplan_class::strategy_Halt(int Robot_index){
     env.home[Robot_index].v_y = 0;
     env.home[Robot_index].v_yaw = 0;
 }
+void FIRA_pathplan_class::motor_place(int v,double num,int r_num){
+    if(v!=0){
+        v=5;
+    }
+    num=0; //60 車頭角 30左邊 90右邊
+    num_change = (int)(((119-num)+120-59)*3) % 360; //將策略轉的角度再轉換回來
+    num_change = 360 - num_change;
+    //num_change=num*3-270;//                
+    //go_where_x=-v*sin(num_change*deg2rad);// 50               70
+    //go_where_y=v*cos(num_change*deg2rad);
+    double vx = -v*sin(num_change*deg2rad);
+    double vy = v*cos(num_change*deg2rad);
+    env.home[r_num].v_x =  vx;
+    env.home[r_num].v_y =  vy;
+    env.home[r_num].v_yaw = 0;
+   
+    // if(v!=0){
+    //     env.home[r_num].v_x =-5.0;
+    //     env.home[r_num].v_y =0.0;
+    //     env.home[r_num].v_yaw = 0.0;
+    // }else{
+    //     env.home[r_num].v_x =0.0;
+    //     env.home[r_num].v_y =0.0;
+    //     env.home[r_num].v_yaw = 0.0;
+    // }
 
+//    if((9<env.home[r_num].FB_yaw)&&(env.home[r_num].FB_yaw<180))
+//    {env.home[r_num].v_yaw = -2;}
+//    else if((180<env.home[r_num].FB_yaw)&&(env.home[r_num].FB_yaw<351)){env.home[r_num].v_yaw = 2;}
+//    else{env.home[r_num].v_yaw=0;}
+}
 double FIRA_pathplan_class::vecAngle(Vector2d a,Vector2d b){
 
     a.normalize();
@@ -829,6 +858,7 @@ void FIRA_pathplan_class::loadParam(ros::NodeHandle *n){
     n->setParam("/AvoidChallenge/far_good_angle",far_good_angle);
     n->setParam("/AvoidChallenge/df_1",df_1);
     n->setParam("/AvoidChallenge/df_2",df_2);
+    //==============================
     n->getParam("/AvoidChallenge/kp",kp);
     n->getParam("/AvoidChallenge/ki",ki);
     n->getParam("/AvoidChallenge/kd",kd);
