@@ -480,10 +480,10 @@ private:
 //        std::cout<<msg->yaw<<std::endl;
     }
 
-  void submpicture(const vision::visionlook::ConstPtr &msg){
-  global_env->picture_m=msg->mpicture;
-  global_env->gray_ave=msg->gray_ave;
-  }
+    void submpicture(const vision::visionlook::ConstPtr &msg){
+        global_env->picture_m=msg->mpicture;
+        global_env->gray_ave=msg->gray_ave;
+    }
     void subVision(const vision::Object::ConstPtr &msg){
         double ball_distance,yellow_distance,blue_distance;
 
@@ -583,7 +583,6 @@ private:
             redObject = n->subscribe<std_msgs::Int32MultiArray>("/vision/redRealDis",1000,&Strategy_nodeHandle::subredObject,this);
             smpicture=n->subscribe<vision::visionlook>("/vision/picture_m",1000,&Strategy_nodeHandle::submpicture,this);
         }
-
     }
 };
 

@@ -7,7 +7,7 @@
 
 //攻擊防守,防守策略？
 //沒有持球攻擊防守的策略
-//
+
 #define BallRadius 0.1055
 #define CarRadius 0.34
 
@@ -127,7 +127,7 @@ public:
     int not_good_p;
     ros::Publisher tovision;
     strategy::strategylook vision_per;
-   double kp,ki,kd;
+    double kp,ki,kd;
     ////////////////////////////////////
 
     std::vector<double> SPlanning_Velocity;
