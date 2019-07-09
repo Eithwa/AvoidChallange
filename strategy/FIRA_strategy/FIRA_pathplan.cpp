@@ -802,17 +802,17 @@ void FIRA_pathplan_class::strategy_Halt(int Robot_index){
     env.home[Robot_index].v_yaw = 0;
 }
 void FIRA_pathplan_class::motor_place(int v,double num,int r_num){
-    if(v!=0){
-        v=5;
-    }
-    num=0; //60 車頭角 30左邊 90右邊
-    num_change = (int)(((119-num)+120-59)*3) % 360; //將策略轉的角度再轉換回來
-    num_change = 360 - num_change;
     //num_change=num*3-270;//                
     //go_where_x=-v*sin(num_change*deg2rad);// 50               70
     //go_where_y=v*cos(num_change*deg2rad);
-    double vx = -v*sin(num_change*deg2rad);
-    double vy = v*cos(num_change*deg2rad);
+    
+    double angle = (int)(num*3+180)%360;//將策略轉的角度再轉換回來 //num 60車頭角 30左邊 90右邊
+    // for(int i = 0; i<120; i++){
+    //     std::cout<<i<<"    "<<(int)(i*3+180) % 360<<std::endl;
+    // }
+    double vx = -v*sin(angle*deg2rad);
+    double vy =  v*cos(angle*deg2rad);
+    //std::cout<<vx<<"  "<<vy<<std::endl;
     env.home[r_num].v_x =  vx;
     env.home[r_num].v_y =  vy;
     env.home[r_num].v_yaw = 0;
