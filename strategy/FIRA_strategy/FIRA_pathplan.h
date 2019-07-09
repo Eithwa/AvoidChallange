@@ -16,8 +16,18 @@
 #define red_line 2
 #define pid_control 3
 #define cannot_chose 4
-
-
+struct ScanInfo
+{
+    ScanInfo();
+    int type;
+    int scan_main;
+    int scan_right;
+    int scan_left;
+    int move_main;
+    int move_right;
+    int move_left;
+    int max_vacancy_number;
+};
 class FIRA_pathplan_class
 {
 private:
@@ -32,6 +42,7 @@ private:
     //start---utility---
     double head2Obj(Vector3D robot,Vector3D dst,double robotRot);
     double vecAngle(Vector2d a,Vector2d b);
+    void RoutePlan(ScanInfo &THIS);
     //end---utility---
 
 
