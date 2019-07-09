@@ -1,16 +1,16 @@
 AvoidChallenge:
   ChooseSide: [0, 1, 0.05, 0.04]
   Distant: [60, 90, 250]
-  FinalAngle: 84.67523046293314
-  GoodAngle: 80.0
+  FinalAngle: 39.08033355550631
+  GoodAngle: 47.0
   GraySet: 10
   IsSimulator: [0]
   Line: [18, 5, 6, 6, 5, 5, 8]
   SPlanning_Velocity: [100, 0.3, 30, 30, 3, 3, 144, 5]
   avoid_go: 0
-  dd_1: 85
-  dd_2: 75
-  df_1: 47
+  dd_1: 59
+  dd_2: 35
+  df_1: 80
   df_2: 40
   far_good_angle: 60.0
   kd: 0
@@ -18,8 +18,8 @@ AvoidChallenge:
   kp: 1
 FIRA:
   Attack_Strategy: [0]
-  Camera: {Focal: 15.225192237275724, High: 650.0}
-  Center: {Front: 335, Inner: 46, Outer: 280, X: 299, Y: 269}
+  Camera: {Focal: 12.544119972834936, High: 650.0}
+  Center: {Front: 276, Inner: 46, Outer: 227, X: 299, Y: 255}
   Chase_Strategy: [0]
   Corner_Kick: [1.2, 60, 90, 50]
   Distance:
@@ -1447,7 +1447,7 @@ FIRA:
   TypeU_Attack: [0.8, 1, -90, 90, 0.6, 0.3, 10, 20]
   Zone_Attack: [0.87, 1.55]
   blackItem: {angle: 3, gray: 23}
-  gray_ave: 11
+  gray_ave: 10
   picture_m: 576
   whiteline: {angle: 4, gray: 100}
 FIRA_Behavior:
@@ -1476,8 +1476,9 @@ rosdistro: 'indigo
 
   '
 roslaunch:
-  uris: {host_iclab__37149: 'http://iclab:37149/', host_iclab__43566: 'http://iclab:43566/',
-    host_iclab__44040: 'http://iclab:44040/', host_iclab__44832: 'http://iclab:44832/'}
+  uris: {host_iarc__36757: 'http://iarc:36757/', host_iclab__37149: 'http://iclab:37149/',
+    host_iclab__43566: 'http://iclab:43566/', host_iclab__44040: 'http://iclab:44040/',
+    host_iclab__44832: 'http://iclab:44832/'}
 rosversion: '1.11.21
 
   '

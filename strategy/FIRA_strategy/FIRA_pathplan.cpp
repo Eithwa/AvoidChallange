@@ -135,6 +135,12 @@ ScanInfo::ScanInfo()
     move_right = scan_right;
     move_left = scan_left;
     max_vacancy_number = 0;
+    for(int i=0; i<30; i++){
+        for(int j=0; j<2; j++){
+            obstacle[i][j]=0;
+            vacancy[i][j]=0;
+        }
+    }
 }
 #define OUTER 0
 #define INNER 1
@@ -147,7 +153,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     bool is_vacancy = false;
     
     bool obstacle_flag = false;//b_ok=1可以走b_ok=0黑色
-    int obstacle[10][2]={0};
+    int obstacle[30][2]={0};
     int obstacle_number=0;
     int obstacle_size=0;
     
@@ -185,18 +191,22 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             if(obstacle_size < size_ignore){//如果前一個障礙物掃線數小於4 初始99
                 //==========這邊有疑問========
                 vacancy_number--;//可走空間減1 合併前一個空間
-                if(vacancy_number==0){
+                if(vacancy_number<=0){
                     vacancy_number=1;
-                    vacancy[vacancy_number][0]=THIS.move_left;//Ok_place初始改成起始最左
+                    vacancy[vacancy_number][0]=THIS.scan_left;//Ok_place初始改成起始最左
                 }
                 obstacle_number--;//障礙物減1 合併前一個障礙物
+                if(obstacle_number<0)obstacle_number=0;
                 vacancy[vacancy_number][1]=i;//可以走的空間結尾
                 vacancy_size=vacancy[vacancy_number][1]-vacancy[vacancy_number][0]+1;//可以走的寬度 （為什麼要+1)
                 obstacle_size=0; //返回障礙物初始值
                 //==========這邊有疑問========
+            }else
+            {
+                ;
             }
         }else{//如果是障礙物
-            vacancy_flag=0;//可以走的flag關閉
+            vacancy_flag=false;//可以走的flag關閉
             if(obstacle_flag==false){
                 obstacle_flag=true;//障礙物計算flag開啟
                 obstacle_number++;
@@ -209,15 +219,24 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             }
             if(vacancy_size<size_ignore){//如果可走空間小於4
                 obstacle_number--;//障礙物減1(合併前一個障礙物嗎?)
-                if(obstacle_number==0){
+                if(obstacle_number<=0){
                     obstacle_number=1;
-                    obstacle[obstacle_number][0]=THIS.move_left;//?
+                    obstacle[obstacle_number][0]=THIS.scan_left;//?
                 }
-                vacancy_size--;//可以走的空間去除(小於4條線)
+                vacancy_number--;//可以走的空間去除(小於4條線)
+                if(vacancy_number<0)vacancy_number=0;
                 obstacle[obstacle_number][1]=i;//改變障礙結尾 合併前一個障礙物
                 obstacle_size=obstacle[obstacle_number][1]-obstacle[obstacle_number][0]+1;//計算障礙物寬度
                 vacancy_size=0;//返回可走空間初始值
+            }else{
+                ;
             }
+        }
+    }
+    for(int i=0; i<30; i++){
+        for(int j=0; j<2; j++){
+            THIS.obstacle[i][j]=obstacle[i][j];
+            THIS.vacancy[i][j]=vacancy[i][j];
         }
     }
     //找到最大可走空間
@@ -232,8 +251,9 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
         }
     }
     THIS.max_vacancy_number = max_vacancy_number;
-    THIS.scan_left  = vacancy[max_vacancy_number][0];
-    THIS.scan_right = vacancy[max_vacancy_number][1];
+    THIS.move_left  = vacancy[max_vacancy_number][0];
+    THIS.move_right = vacancy[max_vacancy_number][1];
+    std::cout<<"move_right: "<<THIS.move_right<<"  move_left: "<<THIS.move_left<<std::endl;
 }
 void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     std::cout<<"===============Avoid Obstacles Information===============\n";
@@ -288,36 +308,29 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //<<<<<<<<<<<<<<<<<<<<<HEAD  Outer dynamic window<<<<<<<<<<<<<<<<<<<<<
     int mainRight=(main_vec+20>90)?90:main_vec+20;
     int mainLeft=(main_vec-20<30)?30:main_vec-20;
+
+    //=====================
     int Boj_place[10][2]={0};
     int Ok_place[30][2];//最多儲存30個空間 （初始化?)
     int line_cont_b=99,line_cont_ok=99,b_ok=1,continuedline_ok=0,continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     int HowManyBoj=0,HowManyOk=0;
     #define close_oj_ignore 4
-    
+    //找到最大可走空間
+    int more_ok_line=0,save_ok_line=0,right_ok=0;
+    //=====================
+
     ScanInfo outer;
     outer.type = OUTER;
     outer.scan_main = main_vec;
     outer.scan_left = mainLeft;
     outer.scan_right = mainRight;
     RoutePlan(outer);
-    df_1 = outer.move_left;
-    df_2 = outer.move_right;
-    far_good_angle = (df_1+df_2)/2;
-
-    //找到最大可走空間
-    int more_ok_line=0,save_ok_line=0,right_ok=0;
-    // for(int i=1 ; i<=HowManyOk ;i++){
-    //     save_ok_line=Ok_place[i][1]-Ok_place[i][0];
-    //     if(save_ok_line>more_ok_line){
-    //         more_ok_line=save_ok_line;
-    //         right_ok=i;
-    //     }
-    // }
-    // df_1=Ok_place[right_ok][1];
-    // df_2=Ok_place[right_ok][0];
-
-    // far_good_angle=(right_ok==0)?90:(df_1+df_2)/2;
-    // far_good_angle=(far_good_angle+main_vec)/2;//?
+    df_1 = outer.move_right;
+    df_2 = outer.move_left;
+    far_good_angle =(outer.max_vacancy_number==0)?90:(df_1+df_2)/2;
+    far_good_angle=(far_good_angle+main_vec)/2;
+    // std::cout<<"df_1: "<<df_1<<"  df_2:"<<df_2<<std::endl;
+    
     ///////////////////////////////////////////////////2222222222222
     //>>>>>>>>>>>>>>>>>>>>>END   Outer dynamic window>>>>>>>>>>>>>>>>>>>>>
     //<<<<<<<<<<<<<<<<<<<<<HEAD  Inner dynamic window<<<<<<<<<<<<<<<<<<<<<
@@ -332,18 +345,98 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     far_good_angle=main_vec;
     mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
     mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
-    // if(main_vec==40){mainRight=60;mainLeft=30;}
-    // if(main_vec==80){mainRight=90;mainLeft=60;}
     //=========================
-    ScanInfo inner;
-    inner.type = INNER;
-    inner.scan_main = main_vec;
-    inner.scan_left = mainLeft;
-    inner.scan_right = mainRight;
-    RoutePlan(inner);
-    dd_1 = inner.move_left;
-    dd_2 = inner.move_right;
-    good_angle = (int)(inner.max_vacancy_number==0)?90:(df_1+df_2)/2;
+    // ScanInfo inner;
+    // inner.type = INNER;
+    // inner.scan_main = main_vec;
+    // inner.scan_left = mainLeft;
+    // inner.scan_right = mainRight;
+    // RoutePlan(inner);
+    // dd_1 = inner.move_left;
+    // dd_2 = inner.move_right;
+    // //good_angle = (int)(inner.max_vacancy_number==0)?90:(df_1+df_2)/2;
+    // good_angle =(df_1+df_2)/2;
+
+
+line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
+    HowManyBoj=0;HowManyOk=0;
+
+    mainRight=(int)(far_good_angle+20>90)?90:far_good_angle+20;
+    mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
+        far_good_angle=main_vec;
+        mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
+        mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
+//        if(main_vec==40){mainRight=60;mainLeft=30;}
+//        if(main_vec==80){mainRight=90;mainLeft=60;}
+
+    for(int i= mainLeft ; i<=mainRight ; i++){
+        b_ok=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?0:1;
+        if(b_ok==1){
+            continuedline_b=0;
+            if(continuedline_ok==0){
+                continuedline_ok=1;
+                HowManyOk++;
+                line_cont_ok=1;
+                Ok_place[HowManyOk][0]=i;
+                Ok_place[HowManyOk][1]=i;
+            }else{
+                line_cont_ok++;
+                Ok_place[HowManyOk][1]=i;
+            }
+            if(line_cont_b<close_oj_ignore){
+                HowManyOk--;
+                if(HowManyOk==0){
+                    HowManyOk=1;Ok_place[HowManyOk][0]=mainLeft;
+                }
+                HowManyBoj--;
+                Ok_place[HowManyOk][1]=i;
+                line_cont_ok=Ok_place[HowManyOk][1]-Ok_place[HowManyOk][0]+1;
+                line_cont_b=99;
+            }
+        }else{
+            continuedline_ok=0;
+            if(continuedline_b==0){
+                continuedline_b=1;
+                HowManyBoj++;
+                line_cont_b=1;
+                Boj_place[HowManyBoj][0]=i;
+                Boj_place[HowManyBoj][1]=i;
+            }else{
+                line_cont_b++;
+                Boj_place[HowManyBoj][1]=i;
+            }
+            if(line_cont_ok<close_oj_ignore){
+                HowManyBoj--;
+                if(HowManyBoj==0){
+                    HowManyBoj=1;Boj_place[HowManyBoj][0]=mainLeft;
+                }
+                HowManyOk--;
+                Boj_place[HowManyBoj][1]=i;
+                line_cont_b=Boj_place[HowManyBoj][1]-Boj_place[HowManyBoj][0]+1;
+                line_cont_ok=99;
+            }
+        }
+    }
+    more_ok_line=0;save_ok_line=0;right_ok=0;
+    printf("=====================================\nhowmany_ok%d\n",HowManyOk);
+    //print the obj and ok place
+    for(int i=1 ; i<=HowManyOk ;i++){
+        int ok_angle_text = (Ok_place[i][0]+Ok_place[i][1])/2;
+        printf("ok=%d,angle=%d,dis=%d\t",i,ok_angle_text,env.blackdis[ok_angle_text]);
+        std::cout<<Ok_place[i][1]<<"\t"<<Ok_place[i][0]<<"\n";
+    }
+    int BoxInFront=0;//0=no 1=on
+    for(int i=1 ; i<=HowManyOk ;i++){
+        save_ok_line=Ok_place[i][1]-Ok_place[i][0];
+        if(save_ok_line>=more_ok_line){
+            if((HowManyBoj==1)&&(save_ok_line-more_ok_line<=2)){
+                BoxInFront=1;
+
+            }
+            more_ok_line=save_ok_line;
+            right_ok=i;
+        }
+    }
 
     //>>>>>>>>>>>>>>>>>>>>>END   Inner dynamic window>>>>>>>>>>>>>>>>>>>>>
     //解決局部最佳解 強制走某一個方向

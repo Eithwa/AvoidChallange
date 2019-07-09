@@ -3,6 +3,7 @@
 #include <math.h>
 #include "../common/Env.h"
 #include <ros/ros.h>
+#include <vector>
 #include "strategy/strategylook.h"
 
 //攻擊防守,防守策略？
@@ -26,6 +27,8 @@ struct ScanInfo
     int move_main;
     int move_right;
     int move_left;
+    int obstacle[30][2];
+    int vacancy[30][2];
     int max_vacancy_number;
 };
 class FIRA_pathplan_class
