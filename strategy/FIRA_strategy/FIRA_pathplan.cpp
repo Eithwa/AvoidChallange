@@ -148,7 +148,10 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     static double FB_XX=0;
     static double count=0;
     FB_XX=(fabs(FB_x-fb_error)>0.1)?FB_XX:FB_XX+FB_x-fb_error;
-    if(fabs(FB_x-fb_error)<0.1){std::cout<<"停止fuckfuckfuckfuckfuckfuck"<<main_vec<<"\n"<<FB_imu<<"\n";}
+
+
+    
+    if(fabs(FB_x-fb_error)<0.001){std::cout<<"停止fuckfuckfuckfuckfuckfuck"<<main_vec<<"\n"<<FB_imu<<"\n";}
     fb_error=FB_x;
     int r_place_x = -FB_XX*100;
     r_place_x= (r_place_x==0)?very_small:r_place_x;
