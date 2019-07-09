@@ -410,7 +410,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     // }
     /// //////////////////////////////////////////////11111111111111
     ///////////////////////////////////////////////////s
-    //這邊計算的是special case？ 算出的數值會在哪邊使用?  引力斥力使用
+    //人工勢場使用
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     HowManyBoj=0;HowManyOk=0;
     int ssm_r,ssm_l;
@@ -566,7 +566,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         }
     }
     if(right_average_line > 3){ //at least 2 lines
-        red_dis_average = dis_sum/(right_average_line);//左邊紅線距離被右邊取代？ 引力斥力系統無法偵測左邊紅線正確距離
+        red_dis_average = dis_sum/(right_average_line);//左邊紅線距離被右邊取代？ 人工勢場系統無法偵測左邊紅線正確距離
         RedLine = 2;//red in right
         FB_XX=(red_dis_average!=0)?(150-red_dis_average)*0.01:FB_XX;
     }
@@ -611,7 +611,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     double adjust_ojF=1;
    // condition=pid_control;
     switch(condition){
-    case N_S://引力斥力 
+    case N_S://人工勢場 
         for(int i=1 ; i<=HowManyBoj ;i++){ //repulsive force 斥力
             for(int j=Boj_place[i][0] ; j<=Boj_place[i][1] ; j++){
                 if(env.blackdis[j]>=close_dis){//障礙物線大於 判斷距離
@@ -631,15 +631,15 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
             dis_average=small_dis_box;
             //dis_average=(dis_average<33)?0:dis_average;
             //======不需更新=======
-            small_dis_box=999;
-            ignore_average_line=0;
+            //small_dis_box=999;
+            //ignore_average_line=0;
             //===================
 
             if(dis_average<=dangerous_dis){//dangerous_dis = close_dis //60 speed (10) //54  speed (30,10)
                 Obj_angle = (Boj_place[i][0]+Boj_place[i][1])/2;//遠離障礙物平均角度 （是否需改成最近位置角度?)
                 printf("障礙物靠近 warn_B=%d,angle=%d\t,dis=%d\t",i,Obj_angle,dis_average);
                 angle_average = (90-(Obj_angle))*3;//(90-(56+50)/2)*3=111
-                if(((Obj_angle<30)||(Obj_angle>90))/*&&((main_vec!=80)&&(main_vec!=40))*/){//障礙物角度大於左右90度 引力斥力0.8
+                if(((Obj_angle<30)||(Obj_angle>90))/*&&((main_vec!=80)&&(main_vec!=40))*/){//障礙物角度大於左右90度 人工勢場*0.8
                     Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad)*0.8;//[53]->angle 53  //角度乘以0.8？
                     Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad)*0.8;
                 }else{
@@ -663,7 +663,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         final_Fx = F_Max*cos((90-(good_angle))*3*deg2rad)-adjust_ojF*Fx-(0.2*red_dis_average);
         final_Fy = F_Max*sin((90-(good_angle))*3*deg2rad)-adjust_ojF*Fy;
         final_angle= 90-(atan2(final_Fy,final_Fx)*180/pi)/3;
-        printf("引力斥力 S/N========  ");
+        printf("人工勢場 S/N========  ");
         //==============================
         break;
     case box_in_between:
@@ -692,7 +692,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     case pid_control:
         before_error_x=Fx_pid;
         Fx_pid=0;Fy_pid=0;
-        //============引力斥力=============
+        //============人工勢場=============
         for(int i=1 ; i<=HowManyBoj ;i++){ //repulsive force
             for(int j=Boj_place[i][0] ; j<=Boj_place[i][1] ; j++){
                 if(env.blackdis[j]>=close_dis){
@@ -806,7 +806,7 @@ void FIRA_pathplan_class::motor_place(int v,double num,int r_num){
     //go_where_x=-v*sin(num_change*deg2rad);// 50               70
     //go_where_y=v*cos(num_change*deg2rad);
     
-    double angle = (int)(num*3+180)%360;//將策略轉的角度再轉換回來 //num 60車頭角 30左邊 90右邊
+    double angle = (int)(num*3+180)%360;//將策略的角度轉換回馬達角度 //num 60車頭角 30左邊 90右邊
     // for(int i = 0; i<120; i++){
     //     std::cout<<i<<"    "<<(int)(i*3+180) % 360<<std::endl;
     // }
