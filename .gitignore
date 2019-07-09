@@ -6,4 +6,4 @@ __pycache__
 .vscode
 CATKIN_IGNORE
 *~
-
+vision_better.yaml
