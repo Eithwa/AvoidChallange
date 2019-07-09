@@ -140,7 +140,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
 
     static int RedLine = 0; //紅線判斷flag 1left 2right
     ////主要向量範圍
-    static int main_vec=60;//為什麼 60*3 定180為車頭角
+    static int main_vec=60;//60*3 定180為車頭角
 
     ///////redline
     //==========這邊有疑問========
@@ -148,20 +148,21 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     static double FB_XX=0;
     static double count=0;
     FB_XX=(fabs(FB_x-fb_error)>0.1)?FB_XX:FB_XX+FB_x-fb_error;
-    if(fabs(FB_x-fb_error)<0.1){std::cout<<"fuckfuckfuckfuckfuckfuck"<<main_vec<<"\n"<<FB_imu<<"\n";}
+    if(fabs(FB_x-fb_error)<0.1){std::cout<<"停止fuckfuckfuckfuckfuckfuck"<<main_vec<<"\n"<<FB_imu<<"\n";}
     fb_error=FB_x;
     int r_place_x = -FB_XX*100;
     r_place_x= (r_place_x==0)?very_small:r_place_x;
     //  main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
 
     //////
+    //==========未使用=========
     static int main_go_cont=99;
     if((RedLine!=0)||(main_go_cont<13)){//speed17 sec20 speed25 sec15
-        if(RedLine==1){
+        if(RedLine==1){//若紅線在左邊 往右走
             main_vec=80;
             main_go_cont=0;
         }
-        else if(RedLine==2){
+        else if(RedLine==2){//若紅線在右邊 往左走
             main_vec=40;
             main_go_cont=0;
         }else{
@@ -173,7 +174,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     //======================
     /////////////////////////main vector
-    main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;//？ 60前方(180度) 30 (90度) 90(270度) 
+    main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;//? 60前方(180度) 30 (90度) 90(270度) 
     //<<<<<<<<<<<<<<<<<<<<<HEAD  Outer dynamic window<<<<<<<<<<<<<<<<<<<<<
     int mainRight=(main_vec+20>90)?90:main_vec+20;
     int mainLeft=(main_vec-20<30)?30:main_vec-20;
@@ -209,7 +210,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                 HowManyBoj--;//障礙物減1 合併前一個障礙物
                 Ok_place[HowManyOk][1]=i;//可以走的空間結尾
                 line_cont_ok=Ok_place[HowManyOk][1]-Ok_place[HowManyOk][0]+1;//可以走的寬度 （為什麼要+1)
-                line_cont_b=99; //返回障礙物初始值
+                line_cont_b=99; //返回障礙物初始值 是否不需要?
                 //==========這邊有疑問========
             }
         }else{//如果是障礙物
@@ -262,7 +263,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
 
     //==========================為什麼把上面的mainRight直接換掉======
-    far_good_angle=main_vec;//為什麼把far_good_angle換成 main vec
+    //未始用outer數值
+    far_good_angle=main_vec;//為什麼把far_good_angle換成 main_vec
     mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
     mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
     // if(main_vec==40){mainRight=60;mainLeft=30;}
@@ -346,7 +348,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     int near_angle=999,test_angle;
     two_ok_right=good_angle;
     if(intoflag==1){
-        //初始連接黑線資料顯示14個cont 之後都不會進入flag
+        //初始連接黑線資料顯示14個cont的時間 之後都不會進入flag
         printf("qpqpqpqpqpqpqpqpqpqpqpqpqpqp\n");
         intoflag=(count-okokcont<14)?1:0;
         for(int i=1;i<=HowManyOk ;i++){
@@ -544,7 +546,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
 
     left_average_line = 0;
     right_average_line = 0;
-    //========左面 紅線平均距離計算=========
+    //========左側紅線平均距離計算=========
     for(int i= 25 ; i<=40 ; i++){//left_dis_average
         if(env.reddis[i]<red_line_dangerous_dis){
             left_average_line++;
@@ -556,8 +558,13 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         RedLine = 1;//red in left
         FB_XX=(red_dis_average!=0)?(red_dis_average-150)*0.01:FB_XX;
     }
+    if(env.reddis[30]<100){//左側紅線接近
+        FB_XX=(env.reddis[30]!=0)?(env.reddis[30]-150)*0.01:FB_XX;
+        printf("左側紅線接近\n");
+        //printf("redlinegooood\n");
+    }
     //===================================
-    //========右面 紅線平均距離計算=========
+    //========右側紅線平均距離計算=========
     dis_sum=0;
     for(int i= 80 ; i<=95 ; i++){//right_dis_average
         if(env.reddis[i]<red_line_dangerous_dis){
@@ -566,20 +573,14 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         }
     }
     if(right_average_line > 3){ //at least 2 lines
-        red_dis_average = dis_sum/(right_average_line);//左邊紅線距離被右邊取代？ 人工勢場系統無法偵測左邊紅線正確距離
+        red_dis_average = dis_sum/(right_average_line);//左邊紅線距離被右邊取代
         RedLine = 2;//red in right
         FB_XX=(red_dis_average!=0)?(150-red_dis_average)*0.01:FB_XX;
     }
-    //===================================
     if(env.reddis[90]<100){//右側紅線接近
         FB_XX=(env.reddis[90]!=0)?(150-env.reddis[90])*0.01:FB_XX;
         //printf("gooooodredline\n");
         printf("右側紅線接近\n");
-    }
-    if(env.reddis[30]<100){//左側紅線接近
-        FB_XX=(env.reddis[30]!=0)?(env.reddis[30]-150)*0.01:FB_XX;
-        printf("左側紅線接近\n");
-        //printf("redlinegooood\n");
     }
     //===================================
     //=======引力斥力與中間相子case切換======
