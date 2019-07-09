@@ -158,12 +158,12 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int obstacle_size=0;
     
     bool vacancy_flag = false;
-    int vacancy[30][2]={0};//最多儲存30個空間 （初始化?)
+    int vacancy[30][2]={0};//最多儲存30個空間
     int vacancy_number=0;
     int vacancy_size=0;
     
     int size_ignore = 4;
-    //////////////////////////////////////////////////////2
+
     for(int i=THIS.scan_left; i<THIS.scan_right; i++){
         //若(黑線小於遠層距離 且大於中層距離） 或者紅線小於最遠距離 b_ok = false
         if(THIS.type == OUTER){
@@ -187,9 +187,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
                 vacancy_size++; //可以走的空間寬度++
                 vacancy[vacancy_number][1]=i;//更新結尾
             }
-            //如果掃到攝影機支架黑色障礙物有可能中斷?(可走空間小於4也會被清除所以沒問題)
-            if(obstacle_size < size_ignore){//如果前一個障礙物掃線數小於4 初始99
-                //==========這邊有疑問========
+            if(obstacle_size < size_ignore){//如果前一個障礙物掃線數小於4
                 vacancy_number--;//可走空間減1 合併前一個空間
                 if(vacancy_number<=0){
                     vacancy_number=1;
@@ -200,7 +198,6 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
                 vacancy[vacancy_number][1]=i;//可以走的空間結尾
                 vacancy_size=vacancy[vacancy_number][1]-vacancy[vacancy_number][0]+1;//可以走的寬度 （為什麼要+1)
                 obstacle_size=0; //返回障礙物初始值
-                //==========這邊有疑問========
             }else
             {
                 ;
@@ -221,7 +218,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
                 obstacle_number--;//障礙物減1(合併前一個障礙物嗎?)
                 if(obstacle_number<=0){
                     obstacle_number=1;
-                    obstacle[obstacle_number][0]=THIS.scan_left;//?
+                    obstacle[obstacle_number][0]=THIS.scan_left;
                 }
                 vacancy_number--;//可以走的空間去除(小於4條線)
                 if(vacancy_number<0)vacancy_number=0;
@@ -233,6 +230,8 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             }
         }
     }
+    THIS.obstacle_number = obstacle_number;
+    THIS.vacancy_number = vacancy_number;
     for(int i=0; i<30; i++){
         for(int j=0; j<2; j++){
             THIS.obstacle[i][j]=obstacle[i][j];
@@ -253,7 +252,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     THIS.max_vacancy_number = max_vacancy_number;
     THIS.move_left  = vacancy[max_vacancy_number][0];
     THIS.move_right = vacancy[max_vacancy_number][1];
-    std::cout<<"move_right: "<<THIS.move_right<<"  move_left: "<<THIS.move_left<<std::endl;
+    //std::cout<<"move_right: "<<THIS.move_right<<"  move_left: "<<THIS.move_left<<std::endl;
 }
 void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     std::cout<<"===============Avoid Obstacles Information===============\n";
@@ -284,34 +283,14 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     r_place_x= (r_place_x==0)?very_small:r_place_x;
     //  main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
 
-    //////
-    //==========未使用=========
-    static int main_go_cont=99;
-    if((RedLine!=0)||(main_go_cont<13)){//speed17 sec20 speed25 sec15
-        if(RedLine==1){//若紅線在左邊 往右走
-            main_vec=80;
-            main_go_cont=0;
-        }
-        else if(RedLine==2){//若紅線在右邊 往左走
-            main_vec=40;
-            main_go_cont=0;
-        }else{
-            main_go_cont++;
-        }
-    }else{
-        main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
-       // main_vec=60;
-    }
-    //======================
-    /////////////////////////main vector
-    main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;//? 60前方(180度) 30 (90度) 90(270度) 
     //<<<<<<<<<<<<<<<<<<<<<HEAD  Outer dynamic window<<<<<<<<<<<<<<<<<<<<<
+    main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;//? 60前方(180度) 30 (90度) 90(270度) 
     int mainRight=(main_vec+20>90)?90:main_vec+20;
     int mainLeft=(main_vec-20<30)?30:main_vec-20;
 
     //=====================
-    int Boj_place[10][2]={0};
-    int Ok_place[30][2];//最多儲存30個空間 （初始化?)
+    int Boj_place[30][2]={0};
+    int Ok_place[30][2];//最多儲存30個空間
     int line_cont_b=99,line_cont_ok=99,b_ok=1,continuedline_ok=0,continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     int HowManyBoj=0,HowManyOk=0;
     #define close_oj_ignore 4
@@ -330,184 +309,43 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     far_good_angle =(outer.max_vacancy_number==0)?90:(df_1+df_2)/2;
     far_good_angle=(far_good_angle+main_vec)/2;
     // std::cout<<"df_1: "<<df_1<<"  df_2:"<<df_2<<std::endl;
-    
-    ///////////////////////////////////////////////////2222222222222
+
     //>>>>>>>>>>>>>>>>>>>>>END   Outer dynamic window>>>>>>>>>>>>>>>>>>>>>
     //<<<<<<<<<<<<<<<<<<<<<HEAD  Inner dynamic window<<<<<<<<<<<<<<<<<<<<<
-    //////////////////////////////////////////////////1
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     HowManyBoj=0;HowManyOk=0;
 
     mainRight=(int)(far_good_angle+20>90)?90:far_good_angle+20;
     mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
-
     //=======未始用outer window數值=========
     far_good_angle=main_vec;
     mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
     mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
-    //=========================
-    // ScanInfo inner;
-    // inner.type = INNER;
-    // inner.scan_main = main_vec;
-    // inner.scan_left = mainLeft;
-    // inner.scan_right = mainRight;
-    // RoutePlan(inner);
-    // dd_1 = inner.move_left;
-    // dd_2 = inner.move_right;
-    // //good_angle = (int)(inner.max_vacancy_number==0)?90:(df_1+df_2)/2;
-    // good_angle =(df_1+df_2)/2;
-
-
-line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
-    HowManyBoj=0;HowManyOk=0;
-
-    mainRight=(int)(far_good_angle+20>90)?90:far_good_angle+20;
-    mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
-        far_good_angle=main_vec;
-        mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
-        mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
-//        if(main_vec==40){mainRight=60;mainLeft=30;}
-//        if(main_vec==80){mainRight=90;mainLeft=60;}
-
-    for(int i= mainLeft ; i<=mainRight ; i++){
-        b_ok=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?0:1;
-        if(b_ok==1){
-            continuedline_b=0;
-            if(continuedline_ok==0){
-                continuedline_ok=1;
-                HowManyOk++;
-                line_cont_ok=1;
-                Ok_place[HowManyOk][0]=i;
-                Ok_place[HowManyOk][1]=i;
-            }else{
-                line_cont_ok++;
-                Ok_place[HowManyOk][1]=i;
-            }
-            if(line_cont_b<close_oj_ignore){
-                HowManyOk--;
-                if(HowManyOk==0){
-                    HowManyOk=1;Ok_place[HowManyOk][0]=mainLeft;
-                }
-                HowManyBoj--;
-                Ok_place[HowManyOk][1]=i;
-                line_cont_ok=Ok_place[HowManyOk][1]-Ok_place[HowManyOk][0]+1;
-                line_cont_b=99;
-            }
-        }else{
-            continuedline_ok=0;
-            if(continuedline_b==0){
-                continuedline_b=1;
-                HowManyBoj++;
-                line_cont_b=1;
-                Boj_place[HowManyBoj][0]=i;
-                Boj_place[HowManyBoj][1]=i;
-            }else{
-                line_cont_b++;
-                Boj_place[HowManyBoj][1]=i;
-            }
-            if(line_cont_ok<close_oj_ignore){
-                HowManyBoj--;
-                if(HowManyBoj==0){
-                    HowManyBoj=1;Boj_place[HowManyBoj][0]=mainLeft;
-                }
-                HowManyOk--;
-                Boj_place[HowManyBoj][1]=i;
-                line_cont_b=Boj_place[HowManyBoj][1]-Boj_place[HowManyBoj][0]+1;
-                line_cont_ok=99;
-            }
+    //====================================
+    ScanInfo inner;
+    inner.type = INNER;
+    inner.scan_main = main_vec;
+    inner.scan_left = mainLeft;
+    inner.scan_right = mainRight;
+    RoutePlan(inner);
+    for(int i=0; i<30; i++){
+        for(int j=0; j<2; j++){
+            Boj_place[i][j]=0;
+            Ok_place[i][j]=0;
         }
     }
-    more_ok_line=0;save_ok_line=0;right_ok=0;
-    printf("=====================================\nhowmany_ok%d\n",HowManyOk);
-    //print the obj and ok place
-    for(int i=1 ; i<=HowManyOk ;i++){
-        int ok_angle_text = (Ok_place[i][0]+Ok_place[i][1])/2;
-        printf("ok=%d,angle=%d,dis=%d\t",i,ok_angle_text,env.blackdis[ok_angle_text]);
-        std::cout<<Ok_place[i][1]<<"\t"<<Ok_place[i][0]<<"\n";
-    }
-    int BoxInFront=0;//0=no 1=on
-    for(int i=1 ; i<=HowManyOk ;i++){
-        save_ok_line=Ok_place[i][1]-Ok_place[i][0];
-        if(save_ok_line>=more_ok_line){
-            if((HowManyBoj==1)&&(save_ok_line-more_ok_line<=2)){
-                BoxInFront=1;
-
-            }
-            more_ok_line=save_ok_line;
-            right_ok=i;
+    for(int i=0; i<30; i++){
+        for(int j=0; j<2; j++){
+            Boj_place[i][j] = inner.obstacle[i][j];
+            Ok_place[i][j]  = inner.vacancy[i][j];
         }
     }
-
+    dd_1 = inner.move_left;
+    dd_2 = inner.move_right;
+    good_angle = (int)(inner.max_vacancy_number==0)?90:(df_1+df_2)/2;
+    HowManyOk = inner.vacancy_number;
     //>>>>>>>>>>>>>>>>>>>>>END   Inner dynamic window>>>>>>>>>>>>>>>>>>>>>
-    //解決局部最佳解 強制走某一個方向
-    //=================
-    static int intoflag=0,tem_right_ok=0,okokcont=0,two_ok_right=60,b_goodangle=60;
-    int near_angle=999,test_angle;
-    two_ok_right=good_angle;
-    if(intoflag==1){
-        //初始連接黑線資料顯示14個cont的時間 之後都不會進入flag
-        printf("qpqpqpqpqpqpqpqpqpqpqpqpqpqp\n");
-        intoflag=(count-okokcont<14)?1:0;
-        for(int i=1;i<=HowManyOk ;i++){
-            dd_1=Ok_place[i][1];
-            dd_2=Ok_place[i][0];
-            test_angle=(int)(i==0)?90:(dd_1+dd_2)/2;//跟good_angle一樣?
-            std::cout<<test_angle<<"\t"<<tem_right_ok<<"\n";
-            if(near_angle>abs(test_angle-tem_right_ok)){//test_angle-tem_right_ok=0?
-                near_angle=abs(test_angle-tem_right_ok);
-                good_angle=test_angle;
-                std::cout<<near_angle<<"/////"<<good_angle<<"\n";
-            }
-        }
-    }else if((abs((int)good_angle-b_goodangle)>28)&&(intoflag==0)){//good_angle-b_goodangle=0? 不會進入判斷式
-        //std::cout<<"fuuuuuuuuuuuuk"<<std::endl;
-        if(main_vec<60){//如果主向量大於60*3 
-            for(int i=1;i<=HowManyOk ;i++){//正算?
-                if(Ok_place[i][1]-Ok_place[i][0]>5){//如果可走範圍大於5條線
-                    right_ok=i;
-                    printf("qqqqqqqqqqqqqqq\n");
-                    intoflag=1;
-                    okokcont=count;
-                    dd_1=Ok_place[right_ok][1];
-                    dd_2=Ok_place[right_ok][0];
-                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
-                    tem_right_ok=good_angle;
-                    break;
-                }
-                tem_right_ok=good_angle;
-           }
-        }else{//如果主向量小於60*3 
-            for(int i=HowManyOk;i>=1 ;i--){//反算?
-                if(Ok_place[i][1]-Ok_place[i][0]>5){
-                    right_ok=i;
-                    printf("ppppppppppppp\n");
-                    intoflag=1;
-                    okokcont=count;
-                    dd_1=Ok_place[right_ok][1];
-                    dd_2=Ok_place[right_ok][0];
-                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
-                    tem_right_ok=good_angle;
-                    break;
-                }
-                tem_right_ok=good_angle;
-            }
-        }
-        // good_angle=b_goodangle;
-    }
-    //==========================
-    b_goodangle=two_ok_right;//two_ok_right 等於 good_angle
 
-    dd_1=Ok_place[right_ok][1];
-    dd_2=Ok_place[right_ok][0];
-    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
-
-    // if(BoxInFront==1){
-    //     if(env.blackdis[(int)good_angle]<60){
-    //         good_angle=(main_vec<60)?30:90;
-    //     }                 
-    //     printf("qqqqqqqqqqqqqqq\n");
-    // }
-    /// //////////////////////////////////////////////11111111111111
     ///////////////////////////////////////////////////s
     //人工勢場使用
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
@@ -519,65 +357,26 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
     else if(main_vec==80){ssm_r=25;ssm_l=100;}
     else{ssm_r=25;ssm_l=95;}
     //====================
-    for(int i= ssm_r ; i<=ssm_l ; i++){
-        b_ok=(env.blackdis[i] <= close_dis+20)?0:1;
-        if(b_ok==1){
-            continuedline_b=0;
-            if(continuedline_ok==0){
-                continuedline_ok=1;
-                HowManyOk++;
-                line_cont_ok=1;
-                Ok_place[HowManyOk][0]=i;
-                Ok_place[HowManyOk][1]=i;
-            }else{
-                line_cont_ok++;
-                Ok_place[HowManyOk][1]=i;
-            }
-            if(line_cont_b<1){
-                HowManyOk--;
-                if(HowManyOk==0){
-                    HowManyOk=1;Ok_place[HowManyOk][0]=mainLeft;
-                }
-                HowManyBoj--;
-                Ok_place[HowManyOk][1]=i;
-                line_cont_ok=Ok_place[HowManyOk][1]-Ok_place[HowManyOk][0]+1;
-                line_cont_b=99;
-            }
-        }else{
-            continuedline_ok=0;
-            if(continuedline_b==0){
-                continuedline_b=1;
-                HowManyBoj++;
-                line_cont_b=1;
-                Boj_place[HowManyBoj][0]=i;
-                Boj_place[HowManyBoj][1]=i;
-            }else{
-                line_cont_b++;
-                Boj_place[HowManyBoj][1]=i;
-            }
-            if(line_cont_ok<close_oj_ignore){
-                HowManyBoj--;
-                if(HowManyBoj==0){
-                    HowManyBoj=1;Boj_place[HowManyBoj][0]=mainLeft;
-                }
-                HowManyOk--;
-                Boj_place[HowManyBoj][1]=i;
-                line_cont_b=Boj_place[HowManyBoj][1]-Boj_place[HowManyBoj][0]+1;
-                line_cont_ok=99;
-            }
+    ScanInfo artificial_field;
+    artificial_field.type = ARTIFICIAL_FIELD;
+    artificial_field.scan_main = main_vec;
+    artificial_field.scan_left = ssm_l;
+    artificial_field.scan_right = ssm_r;
+    RoutePlan(artificial_field);
+    HowManyOk = artificial_field.vacancy_number;
+    for(int i=0; i<30; i++){
+        for(int j=0; j<2; j++){
+            Boj_place[i][j]=0;
+            Ok_place[i][j]=0;
         }
     }
-    ///////////////////////////////////////////////////ssssssssssssssss
-    std::cout<<"=========ssssssss============\n";
-    printf("dis[%d]=%d\n",60,env.blackdis[60]);
-    printf("howmany_black object = %d\n",HowManyBoj);
-
-    for(int i=1 ; i<=HowManyBoj ;i++){
-        int Obj_angle_text = (Boj_place[i][0]+Boj_place[i][1])/2;
-        printf("Boj=%d, angle=%d, dis=%d\t", i, Obj_angle_text, env.blackdis[Obj_angle_text]);
-        std::cout<<Boj_place[i][1]<<"\t"<<Boj_place[i][0]<<"\n";
+    for(int i=0; i<30; i++){
+        for(int j=0; j<2; j++){
+            Boj_place[i][j] = artificial_field.obstacle[i][j];
+            Ok_place[i][j]  = artificial_field.vacancy[i][j];
+        }
     }
-    std::cout<<"=========ssssssss end========\n";
+
     ////////////////////////////////////////////////////////////test for strategy
     
     int left_dis_sum = 0;
@@ -591,6 +390,7 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
     int forward_average_line = 0;
     int smallfront=999;
     static int b_forward_dis_sum=0;
+    int robot_radius = 25;
     //=========左面 側邊障礙物平均距離計算========
     for(int i= 25 ; i<=40 ; i++){//left_dis_average //左側(75-120度) 車頭180
         if(env.blackdis[i]<50){ //如果距離小於50
@@ -600,10 +400,10 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
     }
     if(left_average_line > 3){ //at least 2 lines //如果大於三條線都有掃到障礙物 計算平均距離
         left_dis_average = left_dis_sum/(left_average_line);
+        printf("左側障礙物接近 %dcm\n",left_dis_average-robot_radius);
     }else{//距離重置
         left_dis_average=999;
     }
-    printf("left_dis_average=%d\n",left_dis_average);
     //=======================================
     //========右面 側邊障礙物平均距離計算=========
     for(int i= 80 ; i<=95 ; i++){//right_dis_average //右側計算
@@ -614,10 +414,10 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
     }
     if(right_average_line > 3){ //at least 2 lines
         right_dis_average = right_dis_sum/(right_average_line);
+        printf("左側障礙物接近 %dcm\n",right_dis_average-robot_radius);
     }else{
         right_dis_average=999;
     }
-    printf("right_dis_average=%d\n",right_dis_average);
     //=======================================
     //============正面障礙物平均距離計算=========
     for(int i=55 ; i<=65 ;i++){
@@ -629,10 +429,11 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
     }
     if(forward_average_line > 3){ //at least 4 lines
         forward_dis_average = forward_dis_sum/(forward_average_line);
+        printf("正面障礙物接近 %dcm\n",forward_dis_average-robot_radius);
     }else{
         forward_dis_average=999;
     }
-    printf("forward_dis_average=%d\n",forward_dis_average);
+    
     //=======================================
     int condition;//0::0引力  1::1special box_middle
     int dis_sum = 0;
@@ -654,11 +455,7 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
         red_dis_average = dis_sum/(left_average_line);
         RedLine = 1;//red in left
         FB_XX=(red_dis_average!=0)?(red_dis_average-150)*0.01:FB_XX;
-    }
-    if(env.reddis[30]<100){//左側紅線接近
-        FB_XX=(env.reddis[30]!=0)?(env.reddis[30]-150)*0.01:FB_XX;
-        printf("左側紅線接近\n");
-        //printf("redlinegooood\n");
+        printf("左側紅線接近 %dcm\n", red_dis_average-robot_radius);
     }
     //===================================
     //========右側紅線平均距離計算=========
@@ -673,11 +470,7 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
         red_dis_average = dis_sum/(right_average_line);//左邊紅線距離被右邊取代
         RedLine = 2;//red in right
         FB_XX=(red_dis_average!=0)?(150-red_dis_average)*0.01:FB_XX;
-    }
-    if(env.reddis[90]<100){//右側紅線接近
-        FB_XX=(env.reddis[90]!=0)?(150-env.reddis[90])*0.01:FB_XX;
-        //printf("gooooodredline\n");
-        printf("右側紅線接近\n");
+        printf("右側紅線接近 %dcm\n", red_dis_average-robot_radius);
     }
     //===================================
     //=======引力斥力與中間相子case切換======
@@ -735,7 +528,7 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
 
             if(dis_average<=dangerous_dis){//dangerous_dis = close_dis //60 speed (10) //54  speed (30,10)
                 Obj_angle = (Boj_place[i][0]+Boj_place[i][1])/2;//遠離障礙物平均角度 （是否需改成最近位置角度?)
-                printf("障礙物靠近 warn_B=%d,angle=%d\t,dis=%d\t",i,Obj_angle,dis_average);
+                printf("人工勢場 障礙物靠近 warn_B=%d,angle=%d\t,dis=%d\t",i,Obj_angle,dis_average);
                 angle_average = (90-(Obj_angle))*3;//(90-(56+50)/2)*3=111
                 if(((Obj_angle<30)||(Obj_angle>90))/*&&((main_vec!=80)&&(main_vec!=40))*/){//障礙物角度大於左右90度 人工勢場*0.8
                     Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad)*0.8;//[53]->angle 53  //角度乘以0.8？
@@ -750,7 +543,7 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
             dis_average=999;
         }
         if(RedLine!=0){//有偵測到紅線
-            printf("紅線靠近 RedLine=%d\tred_dis_average=%d\n",RedLine,red_dis_average);
+            //printf("紅線靠近 RedLine=%d\tred_dis_average=%d\n",RedLine,red_dis_average);
             if(RedLine==2){
                 red_dis_average=red_line_dangerous_dis-red_dis_average;
             }else{
@@ -855,15 +648,10 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
         }
     }
     //===============================
-    if(not_good_p!=0){
-       stop_count++;
-       if(stop_count>10){
-           v_fast=0;
-           //預設為模擬模式 無接收blackitem 連接網頁後會關閉模擬模式才能正常啟動
-           printf("\n\n[WORNING] 未接收blackitem資料 / 攝影機連線中斷 / 未連接網頁介面\n\n\n");
-        }
-    }else{
-        stop_count=0;
+    if(not_good_p>10){
+        v_fast=0;
+        //預設為模擬模式 無接收blackitem 連接網頁後會關閉模擬模式才能正常啟動
+        printf("\n\n[WORNING] 未接收blackitem資料 / 攝影機連線中斷 / 未連接網頁介面\n\n\n");
     }
 
     b_not_good_p=not_good_p;
@@ -871,19 +659,8 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
     v_fast=(avoid_go==0)?0:v_fast;
     FB_XX=(avoid_go==0)?0:FB_XX;
     motor_place(v_fast,final_angle,r_number);
-    // vision_per.good_angle=good_angle;
-    // vision_per.final_angle=final_angle;
-    // vision_per.far_good_angle=far_good_angle;
-    // vision_per.dd_1=dd_1;
-    // vision_per.dd_2=dd_2;
-    // vision_per.df_1=df_1;
-    // vision_per.df_2=df_2;
-    // tovision.publish(vision_per);
     printf("v_fast=%d\n",v_fast);
     printf("ave_gray=%d\n",env.gray_ave);
-    // printf("not_good_p=%d\n",not_good_p);
-    // printf("30_dis=%d\n",env.blackdis[30]);
-    // printf("90_dis=%d\n",env.blackdis[90]);
     printf("count=%lf\n",count);
     printf("main_vec=%d\n",main_vec);
     printf("far_good_angle=%f\n",far_good_angle);
@@ -891,8 +668,6 @@ line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_o
     printf("final_angle=%lf\n",final_angle);
     printf("FB_x=%lf\t,FB_y=%lf\t",FB_x,FB_y);
     printf("FB_xx=%lf\t,FB_err=%lf\t\n",FB_XX,fb_error);
-    // printf("FB_x=%lf\t,FB_y=%lf\t,FB_imu=%lf\n",FB_x,FB_y,FB_imu);
-    // printf("MotorAngle=%lf\n",num_change);
     std::cout<<"=========================END=============================\n";
 }
 //=========================避障挑戰賽結束=================================

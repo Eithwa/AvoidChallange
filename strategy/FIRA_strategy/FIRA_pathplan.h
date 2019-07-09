@@ -29,6 +29,8 @@ struct ScanInfo
     int move_left;
     int obstacle[30][2];
     int vacancy[30][2];
+    int vacancy_number;
+    int obstacle_number;
     int max_vacancy_number;
 };
 class FIRA_pathplan_class
