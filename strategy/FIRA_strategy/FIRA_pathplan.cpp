@@ -164,78 +164,158 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     
     int size_ignore = 4;
 
-    for(int i=THIS.scan_left; i<THIS.scan_right; i++){
-        //若(黑線小於遠層距離 且大於中層距離） 或者紅線小於最遠距離 b_ok = false
-        if(THIS.type == OUTER){
-            is_vacancy=((env.blackdis[i] <= far_dis)&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis))?false:true;
-        }else if(THIS.type == INNER){
-            is_vacancy=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?false:true;
-        }else if(THIS.type == ARTIFICIAL_FIELD){
-            is_vacancy=(env.blackdis[i] <= close_dis+20)?0:1;
+    // for(int i= THIS.scan_left ; i<=THIS.scan_right ; i++){
+    //     //若黑線小於far dis(250) 且黑線大於中層的距離 或者紅線小於最遠距離 b_ok = false
+    //     if(THIS.type == OUTER){
+    //         is_vacancy=((env.blackdis[i] <= far_dis)&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis))?false:true;
+    //     }else if(THIS.type == INNER){
+    //         is_vacancy=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?false:true;
+    //     }else if(THIS.type == ARTIFICIAL_FIELD){
+    //         is_vacancy=(env.blackdis[i] <= close_dis+20)?0:1;
+    //     }else{
+    //         is_vacancy=(env.blackdis[i] <= close_dis+20)?0:1;
+    //     }
+    //     if(is_vacancy==1){//若可以走的話
+    //         obstacle_flag=0; //障礙物計算flag關閉
+    //         if(vacancy_flag==0){//新的可走空間
+    //             vacancy_flag=1;//可以走的flag開啟
+    //             vacancy_number++;
+    //             vacancy_size=1;
+    //             vacancy[vacancy_number][0]=i;//可以走的空間起始
+    //             vacancy[vacancy_number][1]=i;//可以走的空間結尾
+    //         }else{ //如果vacancy_flag=1 如可以走的flag開啟
+    //             vacancy_size++; //可以走的空間寬度++
+    //             vacancy[vacancy_number][1]=i;//更新結尾
+    //         }
+    //         //如果掃到攝影機支架黑色障礙物有可能中斷?(可走空間小於4也會被清除所以沒問題)
+    //         if(obstacle_size<size_ignore){//如果前一個障礙物掃線數小於4 初始99
+    //             //==========這邊有疑問========
+    //             vacancy_number--;//可走空間減1 合併前一個空間
+    //             if(vacancy_number==0){
+    //                 vacancy_number=1;
+    //                 vacancy[vacancy_number][0]=THIS.scan_left;//vacancy初始改成起始最左
+    //             }
+    //             obstacle_number--;//障礙物減1 合併前一個障礙物
+    //             vacancy[vacancy_number][1]=i;//可以走的空間結尾
+    //             vacancy_size=vacancy[vacancy_number][1]-vacancy[vacancy_number][0]+1;//可以走的寬度 （為什麼要+1)
+    //             obstacle_size=99; //返回障礙物初始值
+    //             //==========這邊有疑問========
+    //         }
+    //     }else{//如果是障礙物
+    //         vacancy_flag=0;//可以走的flag關閉
+    //         if(obstacle_flag==0){
+    //             obstacle_flag=1;//障礙物計算flag開啟
+    //             obstacle_number++;
+    //             obstacle_size=1;//障礙物寬度計算
+    //             obstacle[obstacle_number][0]=i;//障礙物起始
+    //             obstacle[obstacle_number][1]=i;//障礙物結尾
+    //         }else{
+    //             obstacle_size++;//更新障礙物寬度
+    //             obstacle[obstacle_number][1]=i;//更新結尾
+    //         }
+    //         if(vacancy_size<size_ignore){//如果可走空間小於4
+    //             obstacle_number--;//障礙物減1(合併前一個障礙物嗎?)
+    //             if(obstacle_number==0){
+    //                 obstacle_number=1;
+    //                 obstacle[obstacle_number][0]=THIS.scan_left;//?
+    //             }
+    //             vacancy_number--;//可以走的空間去除(小於4條線)
+    //             obstacle[obstacle_number][1]=i;//改變障礙結尾 合併前一個障礙物
+    //             obstacle_size=obstacle[obstacle_number][1]-obstacle[obstacle_number][0]+1;//計算障礙物寬度
+    //             vacancy_size=99;//返回可走空間初始值
+    //         }
+    //     }
+    // }
+    // THIS.obstacle_number = obstacle_number;
+    // THIS.vacancy_number = vacancy_number;
+    // for(int i=0; i<30; i++){
+    //     for(int j=0; j<2; j++){
+    //         THIS.obstacle[i][j]=obstacle[i][j];
+    //         THIS.vacancy[i][j]=vacancy[i][j];
+    //     }
+    // }
+    // //找到最大可走空間
+    // int size=0;
+    // int max_size=0;
+    // int max_vacancy_number=0;
+    // for(int i=1 ; i<=vacancy_number ;i++){
+    //     size=vacancy[i][1]-vacancy[i][0];
+    //     if(size>max_size){
+    //         max_size=size;
+    //         max_vacancy_number=i;
+    //     }
+    // }
+    // THIS.max_vacancy_number = max_vacancy_number;
+    // THIS.move_left  = vacancy[max_vacancy_number][0];
+    // THIS.move_right = vacancy[max_vacancy_number][1];
+    // //std::cout<<"move_right: "<<THIS.move_right<<"  move_left: "<<THIS.move_left<<std::endl;
+
+
+
+    int Boj_place[30][2]={0};
+    int Ok_place[30][2];//最多儲存30個空間
+    int line_cont_b=99,line_cont_ok=99,b_ok=1,continuedline_ok=0,continuedline_b=0;//b_ok=1可以走b_ok=0黑色
+    int HowManyBoj=0,HowManyOk=0;
+    #define close_oj_ignore 4
+    line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
+    HowManyBoj=0;HowManyOk=0;
+    int mainRight = THIS.scan_right;
+    int mainLeft = THIS.scan_left;
+
+    for(int i= mainLeft ; i<=mainRight ; i++){
+        b_ok=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?0:1;
+        if(b_ok==1){
+            continuedline_b=0;
+            if(continuedline_ok==0){
+                continuedline_ok=1;
+                HowManyOk++;
+                line_cont_ok=1;
+                Ok_place[HowManyOk][0]=i;
+                Ok_place[HowManyOk][1]=i;
+            }else{
+                line_cont_ok++;
+                Ok_place[HowManyOk][1]=i;
+            }
+            if(line_cont_b<close_oj_ignore){
+                HowManyOk--;
+                if(HowManyOk==0){
+                    HowManyOk=1;Ok_place[HowManyOk][0]=mainLeft;
+                }
+                HowManyBoj--;
+                Ok_place[HowManyOk][1]=i;
+                line_cont_ok=Ok_place[HowManyOk][1]-Ok_place[HowManyOk][0]+1;
+                line_cont_b=99;
+            }
         }else{
-            is_vacancy=(env.blackdis[i] <= close_dis+20)?0:1;
-        }
-        if(is_vacancy==true){//若可以走的話
-            obstacle_flag=false; //障礙物計算flag關閉
-            if(vacancy_flag==false){//新的可走空間
-                vacancy_flag=true;//可以走的flag開啟
-                vacancy_number++;
-                vacancy_size=1;
-                vacancy[vacancy_number][0]=i;//可以走的空間起始
-                vacancy[vacancy_number][1]=i;//可以走的空間結尾
-            }else{ //如果continuedline_ok=1 如可以走的flag開啟
-                vacancy_size++; //可以走的空間寬度++
-                vacancy[vacancy_number][1]=i;//更新結尾
-            }
-            if(obstacle_size < size_ignore){//如果前一個障礙物掃線數小於4
-                vacancy_number--;//可走空間減1 合併前一個空間
-                if(vacancy_number<=0){
-                    vacancy_number=1;
-                    vacancy[vacancy_number][0]=THIS.scan_left;//Ok_place初始改成起始最左
-                }
-                obstacle_number--;//障礙物減1 合併前一個障礙物
-                if(obstacle_number<0)obstacle_number=0;
-                vacancy[vacancy_number][1]=i;//可以走的空間結尾
-                vacancy_size=vacancy[vacancy_number][1]-vacancy[vacancy_number][0]+1;//可以走的寬度 （為什麼要+1)
-                obstacle_size=0; //返回障礙物初始值
-            }else
-            {
-                ;
-            }
-        }else{//如果是障礙物
-            vacancy_flag=false;//可以走的flag關閉
-            if(obstacle_flag==false){
-                obstacle_flag=true;//障礙物計算flag開啟
-                obstacle_number++;
-                obstacle_size=1;//障礙物寬度計算
-                obstacle[obstacle_number][0]=i;//障礙物起始
-                obstacle[obstacle_number][1]=i;//障礙物結尾
+            continuedline_ok=0;
+            if(continuedline_b==0){
+                continuedline_b=1;
+                HowManyBoj++;
+                line_cont_b=1;
+                Boj_place[HowManyBoj][0]=i;
+                Boj_place[HowManyBoj][1]=i;
             }else{
-                obstacle_size++;//更新障礙物寬度
-                obstacle[obstacle_number][1]=i;//更新結尾
+                line_cont_b++;
+                Boj_place[HowManyBoj][1]=i;
             }
-            if(vacancy_size<size_ignore){//如果可走空間小於4
-                obstacle_number--;//障礙物減1(合併前一個障礙物嗎?)
-                if(obstacle_number<=0){
-                    obstacle_number=1;
-                    obstacle[obstacle_number][0]=THIS.scan_left;
+            if(line_cont_ok<close_oj_ignore){
+                HowManyBoj--;
+                if(HowManyBoj==0){
+                    HowManyBoj=1;Boj_place[HowManyBoj][0]=mainLeft;
                 }
-                vacancy_number--;//可以走的空間去除(小於4條線)
-                if(vacancy_number<0)vacancy_number=0;
-                obstacle[obstacle_number][1]=i;//改變障礙結尾 合併前一個障礙物
-                obstacle_size=obstacle[obstacle_number][1]-obstacle[obstacle_number][0]+1;//計算障礙物寬度
-                vacancy_size=0;//返回可走空間初始值
-            }else{
-                ;
+                HowManyOk--;
+                Boj_place[HowManyBoj][1]=i;
+                line_cont_b=Boj_place[HowManyBoj][1]-Boj_place[HowManyBoj][0]+1;
+                line_cont_ok=99;
             }
         }
     }
-    THIS.obstacle_number = obstacle_number;
-    THIS.vacancy_number = vacancy_number;
+    THIS.obstacle_number = HowManyBoj;
+    THIS.vacancy_number = HowManyOk;
     for(int i=0; i<30; i++){
         for(int j=0; j<2; j++){
-            THIS.obstacle[i][j]=obstacle[i][j];
-            THIS.vacancy[i][j]=vacancy[i][j];
+            THIS.obstacle[i][j]=Boj_place[i][j];
+            THIS.vacancy[i][j]=Ok_place[i][j];
         }
     }
     //找到最大可走空間
@@ -243,15 +323,15 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int max_size=0;
     int max_vacancy_number=0;
     for(int i=1 ; i<=vacancy_number ;i++){
-        size=vacancy[i][1]-vacancy[i][0];
+        size=Ok_place[i][1]-Ok_place[i][0];
         if(size>max_size){
             max_size=size;
             max_vacancy_number=i;
         }
     }
     THIS.max_vacancy_number = max_vacancy_number;
-    THIS.move_left  = vacancy[max_vacancy_number][0];
-    THIS.move_right = vacancy[max_vacancy_number][1];
+    THIS.move_left  = Ok_place[max_vacancy_number][0];
+    THIS.move_right = Ok_place[max_vacancy_number][1];
     //std::cout<<"move_right: "<<THIS.move_right<<"  move_left: "<<THIS.move_left<<std::endl;
 }
 void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
@@ -342,12 +422,130 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     dd_1 = inner.move_left;
     dd_2 = inner.move_right;
-    good_angle = (int)(inner.max_vacancy_number==0)?90:(df_1+df_2)/2;
+    good_angle = (int)(inner.max_vacancy_number==0)?90:(dd_1+dd_2)/2;
     HowManyOk = inner.vacancy_number;
+    HowManyBoj = inner.obstacle_number;
+    std::cout<<"inner.move_right: "<<inner.move_right<<"  inner.move_left: "<<inner.move_left<<std::endl;
+
+    // line_cont_b=99;line
+    
+
+    more_ok_line=0;save_ok_line=0;right_ok=0;
+    printf("=====================================\nhowmany_ok%d\n",HowManyOk);
+    //print the obj and ok place
+    for(int i=1 ; i<=HowManyOk ;i++){
+        int ok_angle_text = (Ok_place[i][0]+Ok_place[i][1])/2;
+        printf("ok=%d,angle=%d,dis=%d\t",i,ok_angle_text,env.blackdis[ok_angle_text]);
+        std::cout<<Ok_place[i][1]<<"\t"<<Ok_place[i][0]<<"\n";
+    }
+    int BoxInFront=0;//0=no 1=on
+    for(int i=1 ; i<=HowManyOk ;i++){
+        save_ok_line=Ok_place[i][1]-Ok_place[i][0];
+        if(save_ok_line>=more_ok_line){
+            if((HowManyBoj==1)&&(save_ok_line-more_ok_line<=2)){
+                BoxInFront=1;
+
+            }
+            more_ok_line=save_ok_line;
+            right_ok=i;
+        }
+    }
+
+    
+    //解決局部最佳解 強制走某一個方向
+    //=================
+    static int intoflag=0,tem_right_ok=0,okokcont=0,two_ok_right=60,b_goodangle=60;
+    int near_angle=999,test_angle;
+    two_ok_right=good_angle;
+    if(intoflag==1){
+        //初始連接黑線資料顯示14個cont的時間 之後都不會進入flag
+        printf("qpqpqpqpqpqpqpqpqpqpqpqpqpqp\n");
+        intoflag=(count-okokcont<14)?1:0;
+        for(int i=1;i<=HowManyOk ;i++){
+            dd_1=Ok_place[i][1];
+            dd_2=Ok_place[i][0];
+            test_angle=(int)(i==0)?90:(dd_1+dd_2)/2;//跟good_angle一樣?
+            std::cout<<test_angle<<"\t"<<tem_right_ok<<"\n";
+            if(near_angle>abs(test_angle-tem_right_ok)){//test_angle-tem_right_ok=0?
+                near_angle=abs(test_angle-tem_right_ok);
+                good_angle=test_angle;
+                std::cout<<near_angle<<"/////"<<good_angle<<"\n";
+            }
+        }
+    }else if((abs((int)good_angle-b_goodangle)>28)&&(intoflag==0)){//good_angle-b_goodangle=0? 不會進入判斷式
+        //std::cout<<"fuuuuuuuuuuuuk"<<std::endl;
+        if(main_vec<60){//如果主向量大於60*3 
+            for(int i=1;i<=HowManyOk ;i++){//正算?
+                if(Ok_place[i][1]-Ok_place[i][0]>5){//如果可走範圍大於5條線
+                    right_ok=i;
+                    printf("qqqqqqqqqqqqqqq\n");
+                    intoflag=1;
+                    okokcont=count;
+                    dd_1=Ok_place[right_ok][1];
+                    dd_2=Ok_place[right_ok][0];
+                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+                    tem_right_ok=good_angle;
+                    break;
+                }
+                tem_right_ok=good_angle;
+           }
+        }else{//如果主向量小於60*3 
+            for(int i=HowManyOk;i>=1 ;i--){//反算?
+                if(Ok_place[i][1]-Ok_place[i][0]>5){
+                    right_ok=i;
+                    printf("ppppppppppppp\n");
+                    intoflag=1;
+                    okokcont=count;
+                    dd_1=Ok_place[right_ok][1];
+                    dd_2=Ok_place[right_ok][0];
+                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+                    tem_right_ok=good_angle;
+                    break;
+                }
+                tem_right_ok=good_angle;
+            }
+        }
+        // good_angle=b_goodangle;
+    }
+    //==========================
+    b_goodangle=two_ok_right;//two_ok_right 等於 good_angle
+
+    dd_1=Ok_place[right_ok][1];
+    dd_2=Ok_place[right_ok][0];
+    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
     //>>>>>>>>>>>>>>>>>>>>>END   Inner dynamic window>>>>>>>>>>>>>>>>>>>>>
 
     ///////////////////////////////////////////////////s
     //人工勢場使用
+    // line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
+    // HowManyBoj=0;HowManyOk=0;
+    // int ssm_r,ssm_l;
+    // //=================
+    // //什麼情況main_vec =40 80?
+    // if(main_vec==40){ssm_r=20;ssm_l=95;}
+    // else if(main_vec==80){ssm_r=25;ssm_l=100;}
+    // else{ssm_r=25;ssm_l=95;}
+    // //====================
+    // ScanInfo artificial_field;
+    // artificial_field.type = ARTIFICIAL_FIELD;
+    // artificial_field.scan_main = main_vec;
+    // artificial_field.scan_left = ssm_l;
+    // artificial_field.scan_right = ssm_r;
+    // RoutePlan(artificial_field);
+    // HowManyOk = artificial_field.vacancy_number;
+    // for(int i=0; i<30; i++){
+    //     for(int j=0; j<2; j++){
+    //         Boj_place[i][j]=0;
+    //         Ok_place[i][j]=0;
+    //     }
+    // }
+    // for(int i=0; i<30; i++){
+    //     for(int j=0; j<2; j++){
+    //         Boj_place[i][j] = artificial_field.obstacle[i][j];
+    //         Ok_place[i][j]  = artificial_field.vacancy[i][j];
+    //     }
+    // }
+
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     HowManyBoj=0;HowManyOk=0;
     int ssm_r,ssm_l;
@@ -357,25 +555,65 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     else if(main_vec==80){ssm_r=25;ssm_l=100;}
     else{ssm_r=25;ssm_l=95;}
     //====================
-    ScanInfo artificial_field;
-    artificial_field.type = ARTIFICIAL_FIELD;
-    artificial_field.scan_main = main_vec;
-    artificial_field.scan_left = ssm_l;
-    artificial_field.scan_right = ssm_r;
-    RoutePlan(artificial_field);
-    HowManyOk = artificial_field.vacancy_number;
-    for(int i=0; i<30; i++){
-        for(int j=0; j<2; j++){
-            Boj_place[i][j]=0;
-            Ok_place[i][j]=0;
+    for(int i= ssm_r ; i<=ssm_l ; i++){
+        b_ok=(env.blackdis[i] <= close_dis+20)?0:1;
+        if(b_ok==1){
+            continuedline_b=0;
+            if(continuedline_ok==0){
+                continuedline_ok=1;
+                HowManyOk++;
+                line_cont_ok=1;
+                Ok_place[HowManyOk][0]=i;
+                Ok_place[HowManyOk][1]=i;
+            }else{
+                line_cont_ok++;
+                Ok_place[HowManyOk][1]=i;
+            }
+            if(line_cont_b<1){
+                HowManyOk--;
+                if(HowManyOk==0){
+                    HowManyOk=1;Ok_place[HowManyOk][0]=mainLeft;
+                }
+                HowManyBoj--;
+                Ok_place[HowManyOk][1]=i;
+                line_cont_ok=Ok_place[HowManyOk][1]-Ok_place[HowManyOk][0]+1;
+                line_cont_b=99;
+            }
+        }else{
+            continuedline_ok=0;
+            if(continuedline_b==0){
+                continuedline_b=1;
+                HowManyBoj++;
+                line_cont_b=1;
+                Boj_place[HowManyBoj][0]=i;
+                Boj_place[HowManyBoj][1]=i;
+            }else{
+                line_cont_b++;
+                Boj_place[HowManyBoj][1]=i;
+            }
+            if(line_cont_ok<close_oj_ignore){
+                HowManyBoj--;
+                if(HowManyBoj==0){
+                    HowManyBoj=1;Boj_place[HowManyBoj][0]=mainLeft;
+                }
+                HowManyOk--;
+                Boj_place[HowManyBoj][1]=i;
+                line_cont_b=Boj_place[HowManyBoj][1]-Boj_place[HowManyBoj][0]+1;
+                line_cont_ok=99;
+            }
         }
     }
-    for(int i=0; i<30; i++){
-        for(int j=0; j<2; j++){
-            Boj_place[i][j] = artificial_field.obstacle[i][j];
-            Ok_place[i][j]  = artificial_field.vacancy[i][j];
-        }
+    ///////////////////////////////////////////////////ssssssssssssssss
+    std::cout<<"=========ssssssss============\n";
+    printf("dis[%d]=%d\n",60,env.blackdis[60]);
+    printf("howmany_black object = %d\n",HowManyBoj);
+
+    for(int i=1 ; i<=HowManyBoj ;i++){
+        int Obj_angle_text = (Boj_place[i][0]+Boj_place[i][1])/2;
+        printf("Boj=%d, angle=%d, dis=%d\t", i, Obj_angle_text, env.blackdis[Obj_angle_text]);
+        std::cout<<Boj_place[i][1]<<"\t"<<Boj_place[i][0]<<"\n";
     }
+    std::cout<<"=========ssssssss end========\n";
 
     ////////////////////////////////////////////////////////////test for strategy
     
@@ -390,7 +628,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     int forward_average_line = 0;
     int smallfront=999;
     static int b_forward_dis_sum=0;
-    int robot_radius = 25;
+    int robot_radius = 30;
     //=========左面 側邊障礙物平均距離計算========
     for(int i= 25 ; i<=40 ; i++){//left_dis_average //左側(75-120度) 車頭180
         if(env.blackdis[i]<50){ //如果距離小於50
@@ -400,7 +638,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     if(left_average_line > 3){ //at least 2 lines //如果大於三條線都有掃到障礙物 計算平均距離
         left_dis_average = left_dis_sum/(left_average_line);
-        printf("左側障礙物接近 %dcm\n",left_dis_average-robot_radius);
+        if(left_dis_average>0)printf("左側障礙物接近 %dcm\n",left_dis_average-robot_radius);
     }else{//距離重置
         left_dis_average=999;
     }
@@ -414,7 +652,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     if(right_average_line > 3){ //at least 2 lines
         right_dis_average = right_dis_sum/(right_average_line);
-        printf("左側障礙物接近 %dcm\n",right_dis_average-robot_radius);
+        if(right_dis_average>0)printf("右側障礙物接近 %dcm\n",right_dis_average-robot_radius);
     }else{
         right_dis_average=999;
     }
@@ -429,7 +667,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     if(forward_average_line > 3){ //at least 4 lines
         forward_dis_average = forward_dis_sum/(forward_average_line);
-        printf("正面障礙物接近 %dcm\n",forward_dis_average-robot_radius);
+        if(forward_dis_average>0)printf("正面障礙物接近 %dcm\n",forward_dis_average-robot_radius);
     }else{
         forward_dis_average=999;
     }
@@ -455,7 +693,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         red_dis_average = dis_sum/(left_average_line);
         RedLine = 1;//red in left
         FB_XX=(red_dis_average!=0)?(red_dis_average-150)*0.01:FB_XX;
-        printf("左側紅線接近 %dcm\n", red_dis_average-robot_radius);
+        if(red_dis_average>0)printf("左側紅線接近 %dcm\n", red_dis_average-robot_radius);
     }
     //===================================
     //========右側紅線平均距離計算=========
@@ -470,7 +708,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         red_dis_average = dis_sum/(right_average_line);//左邊紅線距離被右邊取代
         RedLine = 2;//red in right
         FB_XX=(red_dis_average!=0)?(150-red_dis_average)*0.01:FB_XX;
-        printf("右側紅線接近 %dcm\n", red_dis_average-robot_radius);
+        if(red_dis_average>0)printf("右側紅線接近 %dcm\n", red_dis_average-robot_radius);
     }
     //===================================
     //=======引力斥力與中間相子case切換======
@@ -795,4 +1033,3 @@ void FIRA_pathplan_class::loadParam(ros::NodeHandle *n){
     }
     */
 }
-
