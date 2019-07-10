@@ -18,8 +18,8 @@ AvoidChallenge:
   kp: 1
 FIRA:
   Attack_Strategy: [0]
-  Camera: {Focal: 12.544119972834936, High: 650.0}
-  Center: {Front: 276, Inner: 46, Outer: 227, X: 299, Y: 255}
+  Camera: {Focal: 14.725920484803966, High: 650.0}
+  Center: {Front: 276, Inner: 46, Outer: 270, X: 306, Y: 245}
   Chase_Strategy: [0]
   Corner_Kick: [1.2, 60, 90, 50]
   Distance:
@@ -1476,7 +1476,8 @@ rosdistro: 'indigo
 
   '
 roslaunch:
-  uris: {host_iarc__36757: 'http://iarc:36757/', host_iclab__37149: 'http://iclab:37149/',
+  uris: {host_iarc__36757: 'http://iarc:36757/', host_iclab__33711: 'http://iclab:33711/',
+    host_iclab__37149: 'http://iclab:37149/', host_iclab__41841: 'http://iclab:41841/',
     host_iclab__43566: 'http://iclab:43566/', host_iclab__44040: 'http://iclab:44040/',
     host_iclab__44832: 'http://iclab:44832/'}
 rosversion: '1.11.21
