@@ -164,6 +164,15 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int vacancy_size=99;
 
     for(int i= THIS.scan_left ; i<=THIS.scan_right ; i++){
+        if(THIS.type == OUTER){
+            is_vacancy=((env.blackdis[i] <= far_dis)&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis))?false:true;
+        }else if(THIS.type == INNER){
+            is_vacancy=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?false:true;
+        }else if(THIS.type == ARTIFICIAL_FIELD){
+            is_vacancy=(env.blackdis[i] <= close_dis+20)?false:true;
+        }else{
+            is_vacancy=(env.blackdis[i] <= close_dis+20)?false:true;
+        }
         is_vacancy=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?false:true;
         if(is_vacancy==true){
             obstacle_flag=false;
