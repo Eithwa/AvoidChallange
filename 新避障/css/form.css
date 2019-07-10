@@ -8,7 +8,50 @@ body {
     overflow-y: hidden;
     overflow-x: hidden;
 }
+#titleModalLabel {
+    /*
+    position: relative;
+    font-size: 60px;
+    left: 30%;
+    top: -15%;
+	*/
+    font-family: 'Pacifico', cursive;
+}
+#SpeedDiv {
+    width: 185px;
+    height: 60px;
+    z-index: 1;
+    position: relative;
+    top: -25%;
+    left: 50%;
+    font-size: 20px;
+}
 
+#SpeedDiv table {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+#SpeedSlider {
+    width: 185px;
+    position: relative;
+    top: 45%;
+    left:10%;
+
+}
+
+#SpeedInput {
+    width: 55px;
+    height: 25px;
+    position: relative;
+    top: 48%;
+    left: 10%;
+}
+#SpeedLabel{
+    position: relative;
+    left:10%;
+}
 .modalBackground {
     background: url(../img/111.png) center center no-repeat;
     background-size: cover;
@@ -177,7 +220,7 @@ body {
 
 #Joystick {
     position: relative;
-    top: -23%;
+    top: -27%;
     left: 54%;
     width: 210px;
     height: 210px;

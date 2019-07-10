@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/Button.css">
     <link rel="stylesheet" href="css/GroundImage.css">
     <link rel="stylesheet" href="css/wifi.css">
+    <link rel="stylesheet" href="css/font-pacifico.css">
     <!-- jQuery UI-->
     <link rel="stylesheet" href="jquery-ui-1.11.4/jquery-ui.css">
     <!-- Javascript -->
@@ -33,7 +34,7 @@
         <div class="modal-content modalCotentStyle">
             <div class="modal-body modalBodyStyle">
                 <div class="form-group" id="AvoidanceBAR">
-                    <h2>Avoidance Challenge UI</h2>
+                    <h2 id="titleModalLabel" >Avoidance Challenge UI</h2>
                     <!--Wifi-->
                     <div id="AvoidanceWifi">
                         <span><img id="Setting_Wifi" src="img/wifi.png"  data-toggle="modal" data-target="#connect_Robot"></img></span>
@@ -127,6 +128,23 @@
                         </tr>
                     </table>
                 </div>
+                <div id="SpeedDiv">
+                    <table>
+                        <tr>
+                            <!--<td colspan="2" align="center">
+                                <label id="SpeedLabel">Speed&nbsp;<i class="fa fa-bolt "></i></label>
+                            </td>-->
+                            <td>
+                                <input id="SpeedSlider" name="SpeedElement" type="range" min="0" max="100" value="10" oninput="ToInputValue(this.value,this.name,1);">
+                            </td>
+                            <td align="center">
+                                <input id="SpeedInput" name="SpeedElement" placeholder="Speed" value="10" type="number" min="0" max="100" oninput="ToSliderValue(this.value,this.name,0);" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
                 <div id="Joystick" class="form-group">
                     <canvas id="Joystick_Canvas">
                         Your browser does not support the HTML5 canvas tag.
@@ -178,6 +196,7 @@
     <script src="js/KeyboardControl.js"></script>
     <script src="js/SafeSwitch.js"></script>
     <script src="js/Joystick.js"></script>
+    <script src="js/SliderControl.js"></script>
 </body>
 
 </html>

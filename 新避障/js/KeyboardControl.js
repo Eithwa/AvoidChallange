@@ -143,7 +143,7 @@ function keysdown(e) {
 
 function keyuped(e) {
     if (KeyboardStart) {
-      console.log("start moving");
+        console.log("start moving speed: %d", speed);
         if (keys[e.keyCode] == true) releasebutton(e.keyCode);
         keys[e.keyCode] = false;
     }

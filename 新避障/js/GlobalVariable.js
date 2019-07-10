@@ -12,7 +12,7 @@ var obj;
 var RemoteState = 0;
 
 //Speed
-var speed = 30
+var speed = parseFloat(document.getElementById("SpeedSlider").value);
 
 //Keyboard
 var keys = [];
