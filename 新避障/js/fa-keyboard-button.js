@@ -43,7 +43,7 @@
             offColor: '#2A2A2A',
             offBackgroundColor: '#505050',
             onColor: '#2A2A2A',
-            onBackgroundColor: '#aa6900',
+            onBackgroundColor: '#ffd500',
             mode: 'toggle', //toggle, push, signal, dimmer
             toggleOn: null,
             toggleOff: null,

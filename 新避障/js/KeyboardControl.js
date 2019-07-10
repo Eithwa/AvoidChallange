@@ -22,85 +22,100 @@ function keysdown(e) {
         var vec3;
         keys[e.keyCode] = true;
 
-        //direction
-        if (keys[38] && keys[39]) { //右前
+        //RobotControl
+        if (keys[87] && keys[68]) {
             vec3 = new ROSLIB.Message({
                 x: parseFloat(speed / Math.pow(2, 0.5)),
                 y: parseFloat(speed / Math.pow(2, 0.5)),
                 z: 0
             });
             PublishTopicCmdVel(vec3);
-        } else if (keys[38] && keys[37]) { //左前
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[87] && keys[65]) {
             vec3 = new ROSLIB.Message({
                 x: -parseFloat(speed / Math.pow(2, 0.5)),
                 y: parseFloat(speed / Math.pow(2, 0.5)),
                 z: 0
             });
             PublishTopicCmdVel(vec3);
-        } else if (keys[40] && keys[39]) { //右後
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[83] && keys[68]) {
             vec3 = new ROSLIB.Message({
                 x: parseFloat(speed / Math.pow(2, 0.5)),
                 y: -parseFloat(speed / Math.pow(2, 0.5)),
                 z: 0
             });
             PublishTopicCmdVel(vec3);
-        } else if (keys[40] && keys[37]) { //左後
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[83] && keys[65]) {
             vec3 = new ROSLIB.Message({
                 x: -parseFloat(speed / Math.pow(2, 0.5)),
                 y: -parseFloat(speed / Math.pow(2, 0.5)),
                 z: 0
             });
             PublishTopicCmdVel(vec3);
-        } else if (keys[38]) { //前
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[87]) {
             vec3 = new ROSLIB.Message({
                 x: 0,
                 y: parseFloat(speed),
                 z: 0
             });
             PublishTopicCmdVel(vec3);
-        } else if (keys[39]) { //右
+           // PublishTopicCmdVel(vec3);
+        } else if (keys[68]) {
             vec3 = new ROSLIB.Message({
                 x: parseFloat(speed),
                 y: 0,
                 z: 0
             });
             PublishTopicCmdVel(vec3);
-        } else if (keys[40]) { //後
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[83]) {
             vec3 = new ROSLIB.Message({
                 x: 0,
                 y: -parseFloat(speed),
                 z: 0
             });
             PublishTopicCmdVel(vec3);
-        } else if (keys[37]) { //左
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[65]) {
             vec3 = new ROSLIB.Message({
                 x: -parseFloat(speed),
                 y: 0,
                 z: 0
             });
             PublishTopicCmdVel(vec3);
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[69]) {
+            var speed_;
+            if (Math.abs(parseFloat(speed)) > 15){
+              speed_ = parseFloat(speed) * 0.5;
+            }else{
+              speed_ = speed;
+            }
+            vec3 = new ROSLIB.Message({
+                x: 0,
+                y: 0,
+                z: -parseFloat(speed_)
+            });
+            PublishTopicCmdVel(vec3);
+            //PublishTopicCmdVel(vec3);
+        } else if (keys[81]) {
+            var speed_;
+            if (Math.abs(parseFloat(speed)) > 15){
+              speed_ = parseFloat(speed) * 0.5;
+            }else{
+              speed_ = speed;
+            }
+            vec3 = new ROSLIB.Message({
+                x: 0,
+                y: 0,
+                z: parseFloat(speed_)
+            });
+            PublishTopicCmdVel(vec3);
+            //PublishTopicCmdVel(vec3);
         }
-        // else if (keys[69]) {
-        //     if (speed > 30)
-        //         speed = speed * 0.5;
-        //     vec3 = new ROSLIB.Message({
-        //         x: 0,
-        //         y: 0,
-        //         z: -parseFloat(speed)
-        //     });
-        //     PublishTopicCmdVel(vec3);
-        //     PublishTopicCmdVel(vec3);
-        // } else if (keys[81]) {
-        //     if (speed > 30)
-        //         speed = speed * 0.5;
-        //     vec3 = new ROSLIB.Message({
-        //         x: 0,
-        //         y: 0,
-        //         z: parseFloat(speed)
-        //     });
-        //     PublishTopicCmdVel(vec3);
-        //     PublishTopicCmdVel(vec3);
-        // }
 
         //SwitchRobot
         if (keys[80]) {
@@ -112,18 +127,61 @@ function keysdown(e) {
     }
 }
 
-function releasebutton() {
 
-}
+/* old */
+// function keyuped(e) {
+//     if (KeyboardStart) {
+//         if (keys[81] == true) releasebutton();
+//         else if (keys[69] == true) releasebutton();
+//         else if (keys[87] == true) releasebutton();
+//         else if (keys[65] == true) releasebutton();
+//         else if (keys[83] == true) releasebutton();
+//         else if (keys[68] == true) releasebutton();
+//         keys[e.keyCode] = false;
+//     }
+// }
 
 function keyuped(e) {
     if (KeyboardStart) {
-        if (keys[81] == true) releasebutton();
-        else if (keys[69] == true) releasebutton();
-        else if (keys[87] == true) releasebutton();
-        else if (keys[65] == true) releasebutton();
-        else if (keys[83] == true) releasebutton();
-        else if (keys[68] == true) releasebutton();
+      console.log("start moving");
+        if (keys[e.keyCode] == true) releasebutton(e.keyCode);
         keys[e.keyCode] = false;
+    }
+}
+
+function releasebutton(state) {
+    let vec3 = new ROSLIB.Message({
+        x: 0,
+        y: 0,
+        z: 0
+    });
+    switch(state){
+      case 81:
+        vec3.z = 0;
+        break;
+      case 69:
+        vec3.z = 0;
+        break;
+      case 87:
+        vec3.y = 0;
+        break;
+      case 65:
+        vec3.x = 0;
+        break;
+      case 83:
+        vec3.y = 0;
+        break;
+      case 68:
+        vec3.x = 0;
+        break;
+      default:
+        vec3.x = 0;
+        vec3.y = 0;
+        vec3.Z = 0;
+    }
+    if(state==81||state==69||state==87||state==65||state==83||state==68){
+        console.log("stop");
+        PublishTopicCmdVel(vec3);
+        //PublishTopicCmdVel(vec3);
     }
 }
